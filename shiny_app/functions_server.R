@@ -1,32 +1,23 @@
 # Functions for server side
 
-###############################################.
 # Function that creates line trend charts in Plotly for different splits: age, sex, SIMD 
 # Three parameters: pal_chose - what palette of colours you want
 # dataset - what data to use for the chart formatted as required
 
-## Function for overall charts ----
+############################################### Function for overall charts ###############################################
 
 plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
   
   # Filtering dataset to include only overall figures
   trend_data <- dataset
   
-  ###############################################.
   # Creating objects that change depending on dataset
-  yaxis_title <- case_when(data_name == "LabCases" ~ "Number of positive cases",
-                           data_name == "Admissions" ~ "Number of admissions",
-                           data_name == "ICU" ~ "Number of ICU admissions", 
-                           data_name == "NHS24" ~ "Number of NHS24 contacts")
-  
+  yaxis_title <- case_when(data_name == "LabCases" ~ "Number of positive cases")
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
   
-  measure_name <- case_when(data_name == "LabCases" ~ "Number of Cases: ",
-                            data_name == "Admissions" ~ "Admissions: ",
-                            data_name == "ICU" ~ "ICU admissions: ",
-                            data_name == "NHS24" ~ "NHS24 Contacts: ")
+  measure_name <- case_when(data_name == "LabCases" ~ "Number of Cases: ")
   
   #Text for tooltip
   tooltip_trend <- c(paste0("Date: ", format(trend_data$Date, "%d %b %y"),
@@ -50,14 +41,13 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
 }
 
 
-## Function for NHS24 chart ----
+############################################### Function for NHS24 chart ###############################################
 
 plot_overall_chartNHS24 <- function(dataset, data_name, yaxis_title, area = T) {
   
   # Filtering dataset to include only overall figures
   trend_data <- dataset
   
-  ###############################################.
   # Creating objects that change depending on dataset
   yaxis_title <- case_when(data_name == "NHS24" ~ "Number of COVID-19 related Contacts")
   
@@ -88,14 +78,13 @@ plot_overall_chartNHS24 <- function(dataset, data_name, yaxis_title, area = T) {
 }
 
 
-## Function for SAS chart ----
+############################################### Function for SAS chart ###############################################
 
 plot_overall_chartSAS <- function(dataset, data_name, yaxis_title, area = T) {
   
   # Filtering dataset to include only overall figures
   trend_data <- dataset
   
-  ###############################################.
   # Creating objects that change depending on dataset
   yaxis_title <- case_when(data_name == "SAS" ~ "Number of SAS incidents (suspected COVID-19)")
   
@@ -130,14 +119,13 @@ plot_overall_chartSAS <- function(dataset, data_name, yaxis_title, area = T) {
 }
 
 
-## Function for Assessment Hubs chart ----
+############################################### Function for Assessment Hubs chart ###############################################
 
 plot_overall_chartAssessmentHub <- function(dataset, data_name, yaxis_title, area = T) {
   
   # Filtering dataset to include only overall figures
   trend_data <- dataset
   
-  ###############################################.
   # Creating objects that change depending on dataset
   yaxis_title <- case_when(data_name == "AssessmentHub" ~ "Number of consultations")
   
@@ -172,8 +160,7 @@ plot_overall_chartAssessmentHub <- function(dataset, data_name, yaxis_title, are
 }
 
 
-
-######################################################################.
+############################################### Function to create plot when no data ###############################################
 #Function to create plot when no data available
 plot_nodata <- function(height_plot = 450, text_nodata = "Data not available") {
   text_na <- list(x = 5, y = 5, text = text_nodata , size = 20,
@@ -188,15 +175,14 @@ plot_nodata <- function(height_plot = 450, text_nodata = "Data not available") {
     config( displayModeBar = FALSE) # taking out plotly logo and collaborate button
 } 
 
-## Function for AgeSex charts ----
+############################################### Function for AgeSex charts ###############################################
 
 plot_agesex_chart <- function(dataset, data_name, yaxis_title, area = T) {
   
   # Filtering dataset to include only overall figures
   trend_data <- dataset
   
-  ###############################################.
-  measure_name <- case_when(data_name == "LabCases_AgeSex" ~ "Cases",
+ measure_name <- case_when(data_name == "LabCases_AgeSex" ~ "Cases",
                             data_name == "Admissions_AgeSex" ~ "Admissions",
                             data_name == "ICU_AgeSex" ~ "ICU admissions",
                             data_name == "NHS24_AgeSex" ~ "NHS24 contacts",
@@ -240,14 +226,13 @@ plot_agesex_chart <- function(dataset, data_name, yaxis_title, area = T) {
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
 }
 
-## Function for SIMD charts ----
+############################################### Function for SIMD charts ###############################################
 
 plot_simd_chart <- function(dataset, data_name, yaxis_title, area = T) {
   
   # Filtering dataset to include only overall figures
   trend_data <- dataset
   
-  ###############################################.
   # Creating objects that change depending on dataset
   yaxis_title <- case_when(data_name == "LabCases_SIMD" ~ "Cases",
                            data_name == "Admissions_SIMD" ~ "Admissions",
@@ -296,14 +281,13 @@ plot_simd_chart <- function(dataset, data_name, yaxis_title, area = T) {
 }
 
 
-## Function for other charts -----------------------------------------------
+############################################### Function for other charts ###############################################
 
 plot_singletrace_chart <- function(dataset, data_name, yaxis_title, area = T) {
   
   # Filtering dataset to include only overall figures
   trend_data <- dataset
   
-  ###############################################.
   # Creating objects that change depending on dataset
   yaxis_title <- case_when(data_name == "NHS24_inform" ~ "Number of hits",
                            data_name == "SAS_all" ~ "Number of SAS incidents")
@@ -335,7 +319,6 @@ plot_singlerate_chart <- function(dataset, data_name, yaxis_title, area = T) {
   # Filtering dataset to include only overall figures
   trend_data <- dataset
   
-  ###############################################.
   # Creating objects that change depending on dataset
   yaxis_title <- case_when(data_name == "LabCases" ~ "Cumulative rate of positive cases per 100,000")
   
@@ -366,7 +349,6 @@ plot_nhs24_selfhelp_chart <- function(dataset, data_name, yaxis_title, area = T)
   # Filtering dataset to include only overall figures
   trend_data <- dataset
   
-  ###############################################.
   # Creating objects that change depending on dataset
   yaxis_title <- case_when(data_name == "NHS24_selfhelp" ~ "Number of self help guides completed")
   
@@ -401,7 +383,7 @@ plot_nhs24_community_chart <- function(dataset, data_name, yaxis_title, area = T
   # Filtering dataset to include only overall figures
   trend_data <- dataset
   
-  ###############################################.
+
   # Creating objects that change depending on dataset
   yaxis_title <- case_when(data_name == "NHS24_community" ~ "Number of NHS24 COVID-19 records")
   
@@ -437,12 +419,11 @@ plot_nhs24_community_chart <- function(dataset, data_name, yaxis_title, area = T
 }
 
 
-## Child Charts ------------------------------------------------------------
+############################################### Child Charts ###############################################
 
 plot_overall_chartChild <- function(dataset, data_name, childdata, yaxis_title, area = T) {
   
   #Filtering dataset to include only overall figures
-  
   
   yaxis_title <- case_when(childdata == "ChildPositive" ~ "Number of patients tested positive",
                            childdata == "ChildNegative" ~"Number of patients tested negative" ,
@@ -493,7 +474,7 @@ plot_overall_chartChild <- function(dataset, data_name, childdata, yaxis_title, 
 }
 
 
-## Contact Tracing Charts --------------------------------------------------
+############################################### Contact Tracing Charts ###############################################
 # % stacked bar charts
 plot_contacttrace_Per_chart <- function(dataset, data_name, CTdata, yaxis_title, area = T) {
   
@@ -574,7 +555,7 @@ plot_contacttrace_chart <- function(dataset, data_name, CTdata, yaxis_title, are
 }
 
 
-# Settings ----------------------------------------------------------------
+################################################ Settings ###############################################
 # cases stacked bar chart
 plot_settings_chart <- function(dataset, data_name, settingdata, yaxis_title, area = T) {
 
@@ -612,7 +593,7 @@ plot_settings_chart <- function(dataset, data_name, settingdata, yaxis_title, ar
 }
 
 
-## Ethnicity Chart ------------------------------------------------------------
+############################################### Ethnicity Chart ###############################################
 
 plot_overall_chartEthnicity <- function(dataset, data_name, yaxis_title, area = T) {
   trend_data <- Ethnicity_Chart
@@ -707,4 +688,4 @@ plot_overall_chartEthnicityPercent <- function(dataset, data_name, yaxis_title, 
 
 
 
-### END
+############################################### END

@@ -1,6 +1,6 @@
 
 
-## Reactive data ----
+############################################### Reactive data ###############################################
 
 ##reactive data to show in app
 data_table <- reactive({  # Change dataset depending on what user selected
@@ -19,15 +19,16 @@ data_table <- reactive({  # Change dataset depending on what user selected
    } #else if (input$data_select %in% "Admissions") { 
   #   table_data <- table_data %>%
   #     select(Date, `Number of Admissions`, `7 day average`) 
-#  } 
+  #  } 
   
 table_data %>% 
     mutate_if(is.numeric, round, 1) %>% 
     mutate_if(is.character, as.factor)
-})
 
-###############################################.
-## Table ----
+}) # end of reactive
+
+
+############################################### Table ###############################################
 
 output$table_filtered <- DT::renderDataTable({
   
@@ -42,10 +43,10 @@ output$table_filtered <- DT::renderDataTable({
                                autoWidth = TRUE),
                 filter = "top",
                 colnames = table_colnames)
-})
+  }) # end of output
 
-###############################################.
-## Data downloads ----
+
+############################################### Data downloads ###############################################
 
 # Data download of data table. 
 output$download_table_csv <- downloadHandler(

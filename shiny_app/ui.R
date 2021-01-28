@@ -13,7 +13,7 @@ tagList(  #needed for shinyjs
                        includeHTML(("www/google-analytics.html"))), #Icon for browser tab     
     # includeScript("data/google-analytics.js")), #Including Google analytics
     
-    #################### Introduction ----
+############################################### Introduction ###############################################
     tabPanel("Introduction",
              icon = icon("info-circle"),
              value = "intro",
@@ -68,7 +68,7 @@ tagList(  #needed for shinyjs
              ), #tabPanel bracket
     
     
-    #################### Trend Charts ----
+############################################### Trend Charts ###############################################
     
     tabPanel(
       title = "Trend Charts",
@@ -99,7 +99,7 @@ tagList(  #needed for shinyjs
       
     ),# tabpanel bracket
     
-    #################### Data ----
+############################################### Data ###############################################
     tabPanel(
       title = "Data",
       icon = icon("table"),
@@ -123,7 +123,7 @@ tagList(  #needed for shinyjs
     )# tabpanel bracket
     
     
-    ## End -----------
+############################################### End ###############################################
     
       ) # navbarPage bracket
              ) # taglist bracket
