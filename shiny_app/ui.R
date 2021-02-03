@@ -1,4 +1,4 @@
-
+#secure_app( #uncomment if needing password protection
 #UI
 tagList(  #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -64,8 +64,7 @@ tagList(  #needed for shinyjs
                    href = "mailto:phs.comms@nhs.net",
                    "phs.comms@nhs.net",
                    class = "externallink")),".")#,
-             # ".")
-             ), #tabPanel bracket
+                       ), #tabPanel bracket
     
     
 ############################################### Trend Charts ###############################################
@@ -77,24 +76,18 @@ tagList(  #needed for shinyjs
       wellPanel(
         column(4,
                div(title = "Select the data you want to explore.", # tooltip
-                   radioGroupButtons("measure_select",
-                                     label = "Select the data you want to explore.",
-                                     choices = data_list,
-                                     status = "primary",
-                                     direction = "vertical",
-                                     justified = T))),
+                   selectInput("Profession_select", label = h3("Select the data you want to explore."), 
+                               choices = Profession))),
+                   
         column(4,
                downloadButton('download_chart_data', 'Download data'),
                fluidRow(br()),
-               actionButton(inputId='ab1', label='Metadata',
-                            icon = icon("th"), 
-                            onclick ="window.open('https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/',
-                            '_blank')"))
+               actionButton("btn_dataset_modal", paste0("Data source: ", "ECOSS"), icon = icon('question-circle')))
         
         ), #wellPanel bracket
-      
       mainPanel(width = 12,
                 uiOutput("data_explorer")
+                
       )# mainPanel bracket
       
     ),# tabpanel bracket
@@ -104,22 +97,26 @@ tagList(  #needed for shinyjs
       title = "Data",
       icon = icon("table"),
       value = "table",
-      p(strong("Please note: For the 27/01/21 release of this dashboard there was a data extraction issue involving the Unscheduled Care Datamart.",
-               "As a result of this, the SAS outputs by Age Group and by SIMD will be complete to the week ending 17/01/21.")),
-    
+     
       p("This section allows you to view the data in table format.
         You can use the filters to select the data you are interested in.
-        You can also download the data as a csv using the download button.
-        The data are also hosted in the",
-        tags$a(href = "https://www.opendata.nhs.scot/dataset?groups=covid-19",
-               "Scottish Health and Social Care Open Data portal",
-               class = "externallink"),"."),
+        You can also download the data as a csv using the download button."),
+      
+      p(paste0(CHIText)), 
+      
       column(6,        
              selectInput("data_select", "Select the data you want to explore.",
-                         choices = data_list_data_tab)),      
+                         choices = data_list_data_tab)),  
+      
       column(6, downloadButton('download_table_csv', 'Download data')),
+
+
+#p(paste0("Data is shown only for cases where a valid Unique Patient Identifier was submitted. Data completeness is ", 
+      #         CHICapture$CHICapture, "% (The total number of cases is ", CHICapture$Total, " of which ", CHICapture$Count," were submitted with a valid UPI" )),
+      
       mainPanel(width = 12,
                 DT::dataTableOutput("table_filtered"))
+      
     )# tabpanel bracket
     
     
@@ -127,4 +124,6 @@ tagList(  #needed for shinyjs
     
       ) # navbarPage bracket
              ) # taglist bracket
+#) # secure app
+
 ##END

@@ -6,15 +6,13 @@
 #publication date
 pub_date <- as.Date("2021-01-27")
 
-# Data extraction date
-admission_extract_date <- format(pub_date - 3, "%A %d %B %Y") #format date
-
 
 ############################################### Packages ###############################################
-library(devtools)
-devtools::install_github("andrewsali/shinycssloaders")
+#library(devtools)
+#devtools::install_github("andrewsali/shinycssloaders")
 library(shiny)
 library(plotly) # for charts
+library(tidyverse)
 library(shinyWidgets) # for dropdowns
 library(dplyr) # for data manipulation
 library(DT) # for data table
@@ -26,11 +24,20 @@ library(flextable)
 library(tidytable)
 library(shinyBS) #for collapsible panels in commentary
 library(glue) #for pasting strings
+library(shinymanager)
 library(shinycssloaders) #for loading icons, see line below
 # it uses github version devtools::install_github("andrewsali/shinycssloaders")
 # This is to avoid issues with loading symbols behind charts and perhaps with bouncing of app
 
-############################################### Functions ###############################################
+
+############################################### Data ###############################################
+
+tidyLFT <-readRDS("data/tidyLFT.rds")
+LabCases <-readRDS("data/LabCases.rds")
+CHICapture <-readRDS("data/CHICapture.rds")
+TestNumbers <- readRDS("data/test_numbers.rds")
+
+###############################################Functions###############################################
 
 plot_box <- function(title_plot, plot_output) {
   tagList(h4(title_plot),
@@ -58,22 +65,16 @@ plot_cut_missing <- function(title_plot, plot_output, extra_content = NULL) {
 }
 
 
-############################################### Data ###############################################
-
-LFTextract <-readRDS("data/LFTextract.rds")
-LabCases <-readRDS("data/LabCases.rds")
-
-
 ############################################### Data lists ###############################################
+#Create a function which creates all unique  
+Profession <- c(sort(unique(tidyLFT$test_cohort_name)))
+Work_Location <- c("All locations",sort(unique(tidyLFT$LocationType)))
 
+data_list_data_tab <- c("Daily number of tests by result" = "tidyLFT",
+                        "Number of tests" = "TestNumbers")
 
-data_list <- c("Positive Cases" = "LabCases")
-
-#LFTWorkLocation <- c(sort(unique(Settings$`Setting Type`)))
-
-# choices for data tables
-data_list_data_tab <- c("Positive Cases" = "LabCases")
-
+CHIText <- paste0("Data is shown only for cases where a valid Unique Patient Identifier was submitted. Data completeness is ", 
+                  CHICapture$CHICapture, "% (The total number of cases is ", CHICapture$Total, " of which ", CHICapture$Count," were submitted with a valid UPI" )
 
 ############################################### Palettes ###############################################
 
