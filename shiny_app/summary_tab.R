@@ -4,102 +4,34 @@
 # Link action button click to modal launch 
 observeEvent(input$btn_dataset_modal, 
              
-             if (input$measure_select == "LabCases") { # Positive Cases MODAL
                showModal(modalDialog(
                  title = "What is the data source?",
-                 p("ECOSS (Electronic Communication of Surveillance in Scotland) Database"),
-                 p(glue("Date extracted: {labcases_extract_date}")),
+                 p("Name of Data source goes here"),
+                 p(glue("Date extracted: ")),
                  p("Text goes here") ,    
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-               
-             } else if (input$measure_select == "Admissions") { #Admissions MODAL
-               showModal(modalDialog(
-                 title = "What is the data source?",
-                 p("ECOSS (Electronic Communication of Surveillance in Scotland) and 
-                   RAPID (Rapid Preliminary Inpatient Data"), 
-                 p(glue("Data are correct as at the time of data extract at 9am on {admission_extract_date}.
-                        Data are reviewed and validated on a continuous basis and 
-                        so may be subject to change")),
-                 p("Note that there may be a time lag with some data for the most recent days 
-                   and some of the above figures may change as more data are submitted. 
-                   Data now includes any positive cases from NHS Laboratories or 
-                   UK Government regional testing sites."),               
-                 size = "m",
-                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-               
-             } 
-               )
+             ) # end of observe event for modal
 
-###############################################.
 
 ############################################### Reactive Charts ###############################################
 # The charts and text shown on the app will depend on what the user wants to see
 output$data_explorer <- renderUI({
   
-  # text for titles of cut charts
-  datasettrend <- case_when(input$measure_select == "LabCases" ~ "Positive COVID-19 cases")
+  tagList(h3("Daily number of tests by result"),
+          plot_box("Daily number of tests by result", plot_output = "results_overall"),
+          
+          h3("Number of tests by work location"),
+          plot_box("Number of tests by work location", plot_output = "results_location"))#,
   
-  # text for titles of cut charts
-  dataset <- case_when(input$measure_select == "LabCases" ~ "Positive COVID-19 cases")
-  
-  start_date <- case_when(input$measure_select == "LabCases" ~ "28 February 2020")
-  
-  end_date <- case_when(input$measure_select == "LabCases" ~ Labcases_date)
-  
-  total_title <- glue("Daily number of {datasettrend}")
-
-  
-# data sources
-data_source <- case_when(input$measure_select == "LabCases" ~ "ECOSS")
-
-
-
-############################################### Functions for Chart Layouts ###############################################
-# Function to create the standard layout for all the different charts/sections
-cut_charts <- function(title, source, data_name) {
-  tagList(
-    h3(title),
-    actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')))
-  }
-
-#for e.g. ICU admissions where no SIMD data
-cut_charts_missing <- function(title, source, data_name) {
-  tagList(
-    h3(title),
-    p(""),
-    p(""),
-    actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
-    plot_box(paste0(total_title), paste0(data_name, "_overall")))
-  }
-
-############################################### Set up Charts for each section ###############################################
-
-# Charts and rest of UI
-if (input$measure_select == "LabCases") { #Positive Cases
-  
-  tagList(h3("Daily number of positive COVID-19 cases"),
-          actionButton("btn_dataset_modal", paste0("Data source: ", "ECOSS"), icon = icon('question-circle')),
-          plot_box("Daily number of Positive COVID-19 cases", plot_output = "LabCases_overall"),
-          plot_box("Cumulative rate per 100,000", plot_output = "LabCasesRate"),
-          plot_cut_box(paste0("Positive COVID-19 cases per 100,000 population by age \n(28 February 2020 to ", Labcases_date, ")"), "LabCases_AgeSex",
-                       paste0("Positive COVID-19 cases by deprivation category (SIMD) \n(28 February to 2020 ", Labcases_date, ")"), "LabCases_SIMD"))
-         
-} else if (input$measure_select == "Admissions") { #Admissions
-  cut_charts_subheading(title= "Daily number of COVID-19 admissions to hospital", 
-                        source = data_source, data_name = "Admissions")
-  
-}
-
-
-}) 
+ }) # end of render UI
 
 
 ############################################### Charts ###############################################
 
 # Creating plots for each cut and dataset
-# Trend Charts
-output$LabCases_overall <- renderPlotly({plot_overall_chart(LabCases, data_name = "LabCases")})
+output$results_overall <- renderPlotly({plot_overall_chart(tidyLFT, data_name = "tidyLFT")})
+output$results_location <- renderPlotly({plot_location_chart(tidyLFT, data_name = "tidyLFT")})
 
 
 ############################################### Data downloads ###############################################
@@ -107,13 +39,10 @@ output$LabCases_overall <- renderPlotly({plot_overall_chart(LabCases, data_name 
 # For the charts at the moment the data download is for the overall one,
 # need to think how to allow downloading for each chart
 # Reactive dataset that gets the data the user is visualisaing ready to download
-overall_data_download <- reactive({
-  switch(
-    input$measure_select,
-    "LabCases" = LabCases)})
+
 
 output$download_chart_data <- downloadHandler(
   filename ="data_extract.csv",
   content = function(file) {
-    write_csv(overall_data_download(),
+    write_csv(tidyLFT(),
               file) })

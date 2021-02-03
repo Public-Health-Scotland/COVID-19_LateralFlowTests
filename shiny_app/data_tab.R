@@ -1,39 +1,47 @@
-
-
-############################################### Reactive data ###############################################
-
+# ############################################### Reactive data ###############################################
 ##reactive data to show in app
 data_table <- reactive({  # Change dataset depending on what user selected
   
   table_data <- switch(input$data_select,
-                       "LabCases" = LabCases %>%  rename (`Number of Cases` = Count, 
-                                                          `Cumulative Cases` = Cumulative,
-                                                          `7 day average` = Average7, 
-                                                          `Cumulative Rate per 100,000` = CumulativeRatePer100000)) 
-  
-  if (input$data_select %in% c("LabData")) {
+                       "tidyLFT" = tidyLFT %>% rename (`Profession` = test_cohort_name, 
+                                                       `Work location type` = LocationType,
+                                                       `Work location name` = LocationName, 
+                                                       `Test result` = test_result, 
+                                                       `Date` = new_date),
+                       "TestNumbers" = TestNumbers %>%  rename (`Week ending` = roll_week_ending, 
+                                                                `Profession` = test_cohort_name,
+                                                                `Work location type` = LocationType,
+                                                                `Work location name` = LocationName,
+                                                                `Number of tests` = Number_of_tests,
+                                                                `Number of Individuals` = Count)) 
+    
+  if (input$data_select %in% c("tidyLFT")) {
     table_data <- table_data %>% 
-      select(Date, `Number of Daily Cases`, Cumulative, `Cumulative Rate per 100,000`) %>% 
-      mutate(Date = format(Date, "%d %B %y"))
-
-   } #else if (input$data_select %in% "Admissions") { 
-  #   table_data <- table_data %>%
-  #     select(Date, `Number of Admissions`, `7 day average`) 
-  #  } 
+      select(Date,`Profession`, `Work location type`, `Work location name`, `Test result`, Count) 
+    
+    }   else if (input$data_select %in% "TestNumbers") {
+      table_data <- table_data
+      } 
   
-table_data %>% 
+  table_data %>% 
     mutate_if(is.numeric, round, 1) %>% 
     mutate_if(is.character, as.factor)
+  
+  
+})
 
-}) # end of reactive
+
+
 
 
 ############################################### Table ###############################################
 
 output$table_filtered <- DT::renderDataTable({
   
-  # Remove the underscore from column names in the table
+ # Remove the underscore from column names in the table
   table_colnames  <-  gsub("_", " ", colnames(data_table()))
+ 
+  
 
   DT::datatable(data_table(), style = 'bootstrap',
                 class = 'table-bordered table-condensed',
