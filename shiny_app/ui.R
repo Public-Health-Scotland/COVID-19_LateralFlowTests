@@ -1,4 +1,4 @@
-#secure_app( #uncomment if needing password protection
+secure_app( #uncomment if needing password protection
 #UI
 tagList(  #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -75,16 +75,24 @@ tagList(  #needed for shinyjs
       value = "summary",
       wellPanel(
         column(4,
-               div(title = "Select the data you want to explore.", # tooltip
+               div(title = "Select profession.", # tooltip
                    selectInput("Profession_select", label = h3("Select the data you want to explore."), 
                                choices = Profession))),
-                   
+
         column(4,
-               downloadButton('download_chart_data', 'Download data'),
-               fluidRow(br()),
+               div(title = "Select work location", # tooltip
+                   pickerInput("Location_select", label = h3("Select the data you want to explore."),
+                               choices = NULL,
+                               selected = NULL,
+                               options = list(`actions-box` = TRUE),
+                               multiple = TRUE))),
+
+        column(4,
+               
                actionButton("btn_dataset_modal", paste0("Data source: ", "ECOSS"), icon = icon('question-circle')))
         
         ), #wellPanel bracket
+      
       mainPanel(width = 12,
                 uiOutput("data_explorer")
                 
@@ -109,10 +117,6 @@ tagList(  #needed for shinyjs
                          choices = data_list_data_tab)),  
       
       column(6, downloadButton('download_table_csv', 'Download data')),
-
-
-#p(paste0("Data is shown only for cases where a valid Unique Patient Identifier was submitted. Data completeness is ", 
-      #         CHICapture$CHICapture, "% (The total number of cases is ", CHICapture$Total, " of which ", CHICapture$Count," were submitted with a valid UPI" )),
       
       mainPanel(width = 12,
                 DT::dataTableOutput("table_filtered"))
@@ -124,6 +128,6 @@ tagList(  #needed for shinyjs
     
       ) # navbarPage bracket
              ) # taglist bracket
-#) # secure app
+) # secure app
 
 ##END

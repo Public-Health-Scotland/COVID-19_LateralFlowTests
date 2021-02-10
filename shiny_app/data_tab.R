@@ -41,8 +41,6 @@ output$table_filtered <- DT::renderDataTable({
  # Remove the underscore from column names in the table
   table_colnames  <-  gsub("_", " ", colnames(data_table()))
  
-  
-
   DT::datatable(data_table(), style = 'bootstrap',
                 class = 'table-bordered table-condensed',
                 rownames = FALSE,
