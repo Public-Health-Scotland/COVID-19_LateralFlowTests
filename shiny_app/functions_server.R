@@ -51,17 +51,16 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
 }
 
-################################################ Settings ###############################################
+################################################ Location stacked bar chart ###############################################
 # cases stacked bar chart
 plot_location_chart <- function(dataset, data_name, settingdata, yaxis_title, area = T) {
 
   trend_data <- tidyLFT %>% 
+    filter(test_cohort_name %in% input$Profession_select) %>% 
+    filter(LocationName %in% input$Location_select)  %>%     
     group_by(test_cohort_name, LocationType, LocationName, test_result) %>% 
-    summarise(Count = sum(Count)) %>% 
-    #arrange(Count) %>% 
-    filter(test_cohort_name %in% input$Profession_select) 
-    #filter(test_cohort_name %in% "SOCIAL CARE")
-  
+    summarise(Count = sum(Count)) 
+
   yaxis_title <-  "Number of Tests"
 
   # Modifying standard layout
@@ -90,5 +89,40 @@ plot_location_chart <- function(dataset, data_name, settingdata, yaxis_title, ar
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
 }
 
+################################################ Location stacked bar chart ###############################################
+# cases stacked bar chart
+plot_testnumbers_chart <- function(dataset, data_name, settingdata, yaxis_title, area = T) {
+  
+  trend_data <- TestNumbersChart %>% 
+    filter(test_cohort_name %in% input$Profession_select) %>%  
+    filter(LocationName %in% input$Location_select) %>%
+    filter(roll_week_ending == max(roll_week_ending))
 
+  yaxis_title <-  "Number of Individuals"
+  
+  # Modifying standard layout
+  yaxis_plots[["title"]] <- yaxis_title
+  
+  # ext for tooltip
+  tooltip_trend <- glue("{trend_data$test_cohort_name}<br>",
+                        "{trend_data$LocationType}: {trend_data$LocationName}<br>",
+                        "Number of individuals who had {trend_data$Numberoftests} tests in week ending {trend_data$roll_week_ending}: {trend_data$Count}<br>")
+  
+  # Creating contact tracing time
+  trend_data %>%
+    plot_ly(x = ~LocationName, y = ~Count) %>%
+    add_bars(color = ~ Numberoftests, #colour group
+             colors = pal_overall, #palette
+             stroke = I("black"), #outline
+             text = tooltip_trend,
+             hoverinfo = "text",
+             name = ~ Numberoftests) %>%
+    # Layout
+    layout(margin = list(b = 80, t = 5), #to avoid labels getting cut out
+           yaxis = yaxis_plots, xaxis = xaxis_plots,
+           legend = list(x = 100, y = 0.5), #position of legend
+           barmode = "stack") %>% #split by group
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+}
 ############################################### END

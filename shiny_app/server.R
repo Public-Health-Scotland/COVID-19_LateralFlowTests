@@ -3,18 +3,14 @@ credentials <- readRDS("admin/credentials.rds")
 
 function(input, output, session) {
   
-  # Shinymanager Auth
+  ##################### Shinymanager Auth ########################## 
   res_auth <- secure_server(
-    check_credentials = check_credentials(credentials)
-  )
+    check_credentials = check_credentials(credentials))
   
   output$auth_output <- renderPrint({
     reactiveValuesToList(res_auth)
   })
   
-  
-  
-#function(input, output, session) {
 
   ###############################################.
   # Sourcing file with functions code

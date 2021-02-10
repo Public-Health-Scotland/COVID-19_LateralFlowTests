@@ -1,6 +1,5 @@
 # Global
 
-
 ############################################### Dates ###############################################
 
 #publication date
@@ -14,15 +13,13 @@ library(shiny)
 library(plotly) # for charts
 library(tidyverse)
 library(shinyWidgets) # for dropdowns
-library(dplyr) # for data manipulation
 library(DT) # for data table
 library(shinyjs) # for enable/disable functions
-library(readr) # for writing/reading csvs
+library(readr) # for writing/reading csvs 
 library(stringr) #for manipulating strings
 library(forcats) #manipulating factors
 library(flextable)
 library(tidytable)
-library(shinyBS) #for collapsible panels in commentary
 library(glue) #for pasting strings
 library(shinymanager)
 library(shinycssloaders) #for loading icons, see line below
@@ -36,6 +33,7 @@ tidyLFT <-readRDS("data/tidyLFT.rds")
 LabCases <-readRDS("data/LabCases.rds")
 CHICapture <-readRDS("data/CHICapture.rds")
 TestNumbers <- readRDS("data/test_numbers.rds")
+TestNumbersChart <- readRDS("data/test_numbers_chart.rds")
 
 ###############################################Functions###############################################
 
@@ -44,16 +42,16 @@ plot_box <- function(title_plot, plot_output) {
           withSpinner(plotlyOutput(plot_output)))
 }
 
-plot_cut_box <- function(title_plot1, plot_output1,
-                         title_plot2, plot_output2, extra_content = NULL) {
-  tagList(
-    fluidRow(column(6, h4(title_plot1)),
-             column(6, h4(title_plot2))),
-    extra_content,
-    fluidRow(column(6, withSpinner(plotlyOutput(plot_output1))),
-             column(6, withSpinner(plotlyOutput(plot_output2))))
-  )
-}
+# plot_cut_box <- function(title_plot1, plot_output1,
+#                          title_plot2, plot_output2, extra_content = NULL) {
+#   tagList(
+#     fluidRow(column(6, h4(title_plot1)),
+#              column(6, h4(title_plot2))),
+#     extra_content,
+#     fluidRow(column(6, withSpinner(plotlyOutput(plot_output1))),
+#              column(6, withSpinner(plotlyOutput(plot_output2))))
+#   )
+# }
 
 #if missing plot (e.g. no SIMD)
 plot_cut_missing <- function(title_plot, plot_output, extra_content = NULL) {
@@ -68,7 +66,7 @@ plot_cut_missing <- function(title_plot, plot_output, extra_content = NULL) {
 ############################################### Data lists ###############################################
 #Create a function which creates all unique  
 Profession <- c(sort(unique(tidyLFT$test_cohort_name)))
-Work_Location <- c("All locations",sort(unique(tidyLFT$LocationType)))
+Work_Location <- c(unique(tidyLFT$LocationName))
 
 data_list_data_tab <- c("Daily number of tests by result" = "tidyLFT",
                         "Number of tests" = "TestNumbers")

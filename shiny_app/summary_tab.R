@@ -14,6 +14,23 @@ observeEvent(input$btn_dataset_modal,
              ) # end of observe event for modal
 
 
+###############################################  Update filters ############################################### 
+
+observeEvent(input$Profession_select, {
+
+  data <- tidyLFT %>%
+    filter(test_cohort_name == input$Profession_select)
+
+  # create new lists based on filter selected
+  location_update <- c((sort(unique(data$LocationName)))) # Practices needs to be blank to allow typing
+
+  # update filters
+  updatePickerInput(session,
+                    "Location_select",
+                    choices = location_update, 
+                    selected = location_update)
+})
+
 ############################################### Reactive Charts ###############################################
 # The charts and text shown on the app will depend on what the user wants to see
 output$data_explorer <- renderUI({
@@ -22,8 +39,12 @@ output$data_explorer <- renderUI({
           plot_box("Daily number of tests by result", plot_output = "results_overall"),
           
           h3("Number of tests by work location"),
-          plot_box("Number of tests by work location", plot_output = "results_location"))#,
+          plot_box("Number of tests by work location", plot_output = "results_location"),
+          
+          h3("Number of tests per individual by work location in latest week"),
+          plot_box("Number of tests per individual by work location", plot_output = "testnumbers"))#,
   
+
  }) # end of render UI
 
 
@@ -32,17 +53,5 @@ output$data_explorer <- renderUI({
 # Creating plots for each cut and dataset
 output$results_overall <- renderPlotly({plot_overall_chart(tidyLFT, data_name = "tidyLFT")})
 output$results_location <- renderPlotly({plot_location_chart(tidyLFT, data_name = "tidyLFT")})
+output$testnumbers <- renderPlotly({plot_testnumbers_chart(TestNumbers, data_name = "TestNumbers")})
 
-
-############################################### Data downloads ###############################################
-
-# For the charts at the moment the data download is for the overall one,
-# need to think how to allow downloading for each chart
-# Reactive dataset that gets the data the user is visualisaing ready to download
-
-
-output$download_chart_data <- downloadHandler(
-  filename ="data_extract.csv",
-  content = function(file) {
-    write_csv(tidyLFT(),
-              file) })
