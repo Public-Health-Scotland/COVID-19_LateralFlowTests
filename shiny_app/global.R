@@ -8,7 +8,7 @@ pub_date <- as.Date("2021-01-27")
 
 ############################################### Packages ###############################################
 #library(devtools)
-#devtools::install_github("andrewsali/shinycssloaders")
+# devtools::install_github("andrewsali/shinycssloaders")
 library(shiny)
 library(plotly) # for charts
 library(tidyverse)
@@ -30,10 +30,12 @@ library(shinycssloaders) #for loading icons, see line below
 ############################################### Data ###############################################
 
 tidyLFT <-readRDS("data/tidyLFT.rds")
-LabCases <-readRDS("data/LabCases.rds")
 CHICapture <-readRDS("data/CHICapture.rds")
 TestNumbers <- readRDS("data/test_numbers.rds")
 TestNumbersChart <- readRDS("data/test_numbers_chart.rds")
+TestNumbersChartRoll <- readRDS("data/roll_test_numbers_chart.rds")
+LFT_hb <- readRDS("data/LFT_hb.rds")
+LFT_sc <- readRDS("data/LFT_sc.rds")
 
 ###############################################Functions###############################################
 
@@ -67,16 +69,28 @@ plot_cut_missing <- function(title_plot, plot_output, extra_content = NULL) {
 #Create a function which creates all unique  
 Profession <- c(sort(unique(tidyLFT$test_cohort_name)))
 Work_Location <- c(unique(tidyLFT$LocationName))
+LFT_Profession <- c(sort(unique(LFT_hb$test_cohort_name)))
+Time_period <- c(sort(unique(LFT_hb$time_period)))
+LFT_NHS_Board <- c(sort(unique(LFT_hb$Health_Board_Name)))
+
 
 data_list_data_tab <- c("Daily number of tests by result" = "tidyLFT",
                         "Number of tests" = "TestNumbers")
 
 CHIText <- paste0("Data is shown only for cases where a valid Unique Patient Identifier was submitted. Data completeness is ", 
-                  CHICapture$CHICapture, "% (The total number of cases is ", CHICapture$Total, " of which ", CHICapture$Count," were submitted with a valid UPI" )
+                  CHICapture$CHICapture, "% (The total number of cases is ", CHICapture$Total, " of which ", CHICapture$Count," were submitted with a valid UPI)" )
 
 ############################################### Palettes ###############################################
 
-pal_overall <- c('#000000', '#0078D4','#9B4393', '#bdbdbd', '#bdbdbd', '#bdbdbd', '#7fcdbb')
+# pal_overall <- c('#9B4393', '#0078D4','#000000', '#bdbdbd', '#bdbdbd', '#bdbdbd', '#7fcdbb')
+
+pal_tests <- c("NEGATIVE" = "#0078D4", "INCONCLUSIVE" = "#9B4393", 
+               "POSITIVE" = "#000000")
+
+pal_n_tests <- c("1" = "#082359", "2" = "#0078D4", "3" = "#9B4393", 
+                 "4" = "#dcb4e9", "5" = "#e9b4e0", "6" = "#00cdd4",
+                 "7" = "#7fcdbb", "8" = "#7fcd99", "9" = "#94cd7f", 
+                 "10+" = "#000000")
 
 
 ############################################### Plot Parameters ###############################################
