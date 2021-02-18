@@ -6,18 +6,21 @@ data_table <- reactive({  # Change dataset depending on what user selected
                        "tidyLFT" = tidyLFT %>% rename (`Profession` = test_cohort_name, 
                                                        `Work location type` = LocationType,
                                                        `Work location name` = LocationName, 
+                                                       `NHS Board` = Health_Board_Name, 
                                                        `Test result` = test_result, 
                                                        `Date` = new_date),
-                       "TestNumbers" = TestNumbers %>%  rename (`Week ending` = roll_week_ending, 
+                       "TestNumbers" = TestNumbers %>%  rename (`Week ending` = week_ending, 
                                                                 `Profession` = test_cohort_name,
                                                                 `Work location type` = LocationType,
                                                                 `Work location name` = LocationName,
+                                                                `NHS Board` = Health_Board_Name, 
                                                                 `Number of tests` = Number_of_tests,
                                                                 `Number of Individuals` = Count)) 
     
   if (input$data_select %in% c("tidyLFT")) {
     table_data <- table_data %>% 
-      select(Date,`Profession`, `Work location type`, `Work location name`, `Test result`, Count) 
+      select(Date,`Profession`, `Work location type`, `Work location name`, 
+             `NHS Board`, `Test result`, Count) 
     
     }   else if (input$data_select %in% "TestNumbers") {
       table_data <- table_data

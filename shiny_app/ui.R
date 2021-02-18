@@ -13,61 +13,83 @@ tagList(  #needed for shinyjs
                        includeHTML(("www/google-analytics.html"))), #Icon for browser tab     
     # includeScript("data/google-analytics.js")), #Including Google analytics
     
-############################################### Introduction ###############################################
+    ############################################### Introduction ###############################################
     tabPanel("Introduction",
              icon = icon("info-circle"),
              value = "intro",
              h3("COVID-19 Lateral Flow Tests"),
              h3("Background"),
-             p("Text goes here"),
-             p(""),
+             p("This is a work in progress dashboard on management information for Lateral 
+               Flow results coming from the NSS Portal only. Development work is 
+               ongoing to introduce all LFD results.  Information on PCR 
+               follow-up with be added by 1st March 2021."),
+             p("The NSS Portal tool is a self-service tool thus the data quality is variable."),
              
              h3("Further information"),
              
-             p("There is a large amount of data being regularly published regarding COVID-19. 
-               This dashboard complements the range of existing data currently available."),
+             p("A registration tool is being developed to record more consistent information."), 
              
-             p("Information on surveillance and monitoring of COVID-19 amongst the population are available in the ",
-               tags$a(
-                 href = "https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/",
-                 "COVID-19 weekly report for Scotland.",
-                 class = "externallink")),
+             p("Carehomes have been mapped to NHS Board."), 
              
-             p("Information on the wider impacts on the health care system from COVID-19 are available on the ",
-               tags$a(
-                 href = "https://scotland.shinyapps.io/phs-covid-wider-impact/",
-                 "Wider Impacts dashboard.",
-                 class = "externallink")),
+             p("Council areas have been mapped to NHS Boards."), 
              
-             p("Information and support on a range of topics in regards to COVID-19 are available on the ",
-               tags$a(
-                 href = "https://www.gov.scot/coronavirus-covid-19/",
-                 "Scottish Government website.",
-                 class = "externallink")),
-             
-             p("Information on deaths involving COVID-19 is available on the ",
-               tags$a(
-                 href = "https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/weekly-and-monthly-data-on-births-and-deaths/deaths-involving-coronavirus-covid-19-in-scotland/",
-                 "National Records Scotland website.",
-                 class = "externallink")),
+             p("The NSS tool can be accessed: http://covidtestingportal.scot/"), 
              
              h3("Contact"),         
              p("If you have any questions relating to these data please contact: ",
                tags$b(
                  tags$a(
-                   href = "mailto:phs.covidweeklyreport@phs.scot", # needs updated
-                   "phs.covidweeklyreport@phs.scot", # needs updated
-                   class = "externallink")),"."),
-             p("If you have a media query please contact: ",
-               tags$b(
-                 tags$a(
-                   href = "mailto:phs.comms@nhs.net",
-                   "phs.comms@nhs.net",
-                   class = "externallink")),".")#,
-                       ), #tabPanel bracket
+                   href = "mailto:PHS.Covid19Data&Analytics@phs.scot", # needs updated
+                   "PHS.Covid19Data&Analytics@phs.scot", # needs updated
+                   class = "externallink")),".")
+             ), #tabPanel bracket
+    
+    ############################################### LFT Tests ###############################################
+    
+    tabPanel(
+      title = "NHS Board Data",
+      icon = icon("table"),
+      
+      p("This section allows you to view the total number of LFTs and the 
+        number of positive LFTs within Scotland and each NHS Board for each
+        profession. You can use the filters to select the data you are interested in.
+        You can also download the NHS board data as a csv using the download button."),
+      
+      wellPanel(
+        column(4,
+               div(title = "Select profession", # tooltip
+                   selectInput("LFT_profession_select", label = h3("Select the data you want to explore."),
+                               choices = LFT_Profession))),
+        column(5,
+               div(title = "time_period_select", # tooltip
+                   selectInput("Time_select", label = h3("Select the time period you want to explore."),
+                               choices = Time_period)))#,
+        
+        # column(4,
+        #        
+        #        actionButton("btn_dataset_modal", paste0("Data source: ", "ECOSS"), icon = icon('question-circle'))), 
+        
+        
+      ), #wellPanel bracket
+
+      mainPanel(width = 9,
+                DT::dataTableOutput("LFT_sc_table_filtered")
+
+      ), 
+      
+      column(4, downloadButton('LFT_download_table_csv', 'Download data')), 
+      
+      
+      mainPanel(width = 12,
+                DT::dataTableOutput("LFT_hb_table_filtered")# mainPanel bracket
+                
+      )# tabpanel bracket
+      
+    ), 
     
     
-############################################### Trend Charts ###############################################
+    
+    ############################################### Trend Charts ###############################################
     
     tabPanel(
       title = "Trend Charts",
@@ -78,20 +100,20 @@ tagList(  #needed for shinyjs
                div(title = "Select profession.", # tooltip
                    selectInput("Profession_select", label = h3("Select the data you want to explore."), 
                                choices = Profession))),
-
+        
         column(4,
                div(title = "Select work location", # tooltip
                    pickerInput("Location_select", label = h3("Select the data you want to explore."),
                                choices = NULL,
                                selected = NULL,
                                options = list(`actions-box` = TRUE),
-                               multiple = TRUE))),
-
-        column(4,
-               
-               actionButton("btn_dataset_modal", paste0("Data source: ", "ECOSS"), icon = icon('question-circle')))
+                               multiple = TRUE)))#,
         
-        ), #wellPanel bracket
+        # column(4,
+        #        
+        #        actionButton("btn_dataset_modal", paste0("Data source: ", "ECOSS"), icon = icon('question-circle')))
+        # 
+      ), #wellPanel bracket
       
       mainPanel(width = 12,
                 uiOutput("data_explorer")
@@ -100,12 +122,12 @@ tagList(  #needed for shinyjs
       
     ),# tabpanel bracket
     
-############################################### Data ###############################################
+    ############################################### Data ###############################################
     tabPanel(
       title = "Data",
       icon = icon("table"),
       value = "table",
-     
+      
       p("This section allows you to view the data in table format.
         You can use the filters to select the data you are interested in.
         You can also download the data as a csv using the download button."),
@@ -121,13 +143,13 @@ tagList(  #needed for shinyjs
       mainPanel(width = 12,
                 DT::dataTableOutput("table_filtered"))
       
-    )# tabpanel bracket
+      )# tabpanel bracket
     
     
-############################################### End ###############################################
+    ############################################### End ###############################################
     
-      ) # navbarPage bracket
-             ) # taglist bracket
+    ) # navbarPage bracket
+) # taglist bracket
 ) # secure app
 
 ##END
