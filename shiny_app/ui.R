@@ -26,9 +26,9 @@ tagList(  #needed for shinyjs
             
              p("The NSS Portal tool is a self-service tool thus the data quality is variable."),
              
-             p("Please note we have been made aware that there is a backlog of data 
+             p(strong("Please note we have been made aware that there is a backlog of data 
                for 25th and 26th February 2021. This data should be treated with caution 
-               and will be updated next week."),
+               and will be updated next week.")),
              
              h3("Further information"),
              
