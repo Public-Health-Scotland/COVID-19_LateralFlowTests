@@ -96,9 +96,7 @@ plot_testnumbers_chart <- function(dataset, data_name, settingdata, yaxis_title,
   
   trend_data <- TestNumbersChart %>% 
     filter(test_cohort_name %in% input$Profession_select) %>%  
-    filter(Health_Board_Name %in% input$Location_select) %>%
-    filter(week_ending != max(week_ending)) %>% 
-    filter(week_ending == max(week_ending))
+    filter(Health_Board_Name %in% input$Location_select)
 
   yaxis_title <-  "Number of Individuals"
   
@@ -135,9 +133,7 @@ plot_testnumbers_chart_roll <- function(dataset, data_name, settingdata, yaxis_t
   
   trend_data <- TestNumbersChartRoll %>% 
     filter(test_cohort_name %in% input$Profession_select) %>%  
-    filter(Health_Board_Name %in% input$Location_select) %>%
-    filter(roll_week_ending != max(roll_week_ending)) %>% 
-    filter(roll_week_ending == max(roll_week_ending))
+    filter(Health_Board_Name %in% input$Location_select)
   
   yaxis_title <-  "Number of Individuals"
   

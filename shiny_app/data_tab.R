@@ -15,7 +15,15 @@ data_table <- reactive({  # Change dataset depending on what user selected
                                                                 `Work location name` = LocationName,
                                                                 `NHS Board` = Health_Board_Name, 
                                                                 `Number of tests` = Number_of_tests,
-                                                                `Number of Individuals` = Count)) 
+                                                                `Number of Individuals` = Count), 
+                       "TestNumbersRoll" = TestNumbersRoll %>%  rename (`Week ending` = roll_week_ending, 
+                                                                        `Profession` = test_cohort_name,
+                                                                        `Work location type` = LocationType,
+                                                                        `Work location name` = LocationName,
+                                                                        `NHS Board` = Health_Board_Name, 
+                                                                        `Number of tests` = Number_of_tests,
+                                                                        `Number of Individuals` = Count))
+  
     
   if (input$data_select %in% c("tidyLFT")) {
     table_data <- table_data %>% 
@@ -23,8 +31,13 @@ data_table <- reactive({  # Change dataset depending on what user selected
              `NHS Board`, `Test result`, Count) 
     
     }   else if (input$data_select %in% "TestNumbers") {
+      
       table_data <- table_data
-      } 
+      
+    }  else if (input$data_select %in% "TestNumbersRoll") {
+      
+    table_data <- table_data
+  } 
   
   table_data %>% 
     mutate_if(is.numeric, round, 1) %>% 
