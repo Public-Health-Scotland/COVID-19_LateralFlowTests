@@ -11,10 +11,12 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
   
   # Filtering dataset to include only overall figures
   trend_data <- tidyLFT %>% 
-    group_by(test_cohort_name, test_result, new_date) %>% 
+    # full_join(tidyLFT_expanded_df) %>% 
+    group_by(test_cohort_name, Health_Board_Name, test_result, new_date) %>% 
     summarise(Count = sum(Count)) %>% 
-    spread(test_result, Count) %>%
-    filter(test_cohort_name %in% input$Profession_select)
+    spread(test_result, Count) %>% 
+    filter(test_cohort_name %in% input$Profession_select) %>%
+    filter(Health_Board_Name %in% input$Location_select)
   
   trend_data[is.na(trend_data)] <- 0
   
@@ -27,7 +29,8 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
  # measure_name <- case_when(data_name == "tidyLFT" ~ "Daily number of tests")
   
   #Text for tooltip
-  tooltip_trend <- c(paste0("Date: ", format(trend_data$new_date, "%d %b %y"),
+  tooltip_trend <- c(paste0(trend_data$Health_Board_Name, 
+                            "<br>", "Date: ", format(trend_data$new_date, "%d %b %y"),
                             "<br>", "Number of positive tests: ", trend_data$POSITIVE,
                             "<br>", "Number of inconclusive tests: ", trend_data$INCONCLUSIVE,
                             "<br>", "Number of negative tests: ", trend_data$NEGATIVE))
@@ -51,6 +54,47 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
 }
+
+############################################### Function for overall charts ###############################################
+#output$results_overall <- renderPlotly({plot_overall_chart(tidyLFT, data_name = "tidyLFT")})
+
+# plot_positivity_chat <- function(dataset, data_name, yaxis_title, area = T) {
+#   
+#   # Filtering dataset to include only overall figures
+#   pos_data <- positivity_rate %>% 
+#     select(test_cohort_name, Health_Board_Name, new_date, positive_pc) %>% 
+#     filter(test_cohort_name %in% input$Profession_select) %>%
+#     filter(Health_Board_Name %in% input$Location_select)
+#   
+#   pos_data[is.na(pos_data)] <- 0
+#   
+#   # Creating objects that change depending on dataset
+#   yaxis_title <- case_when(data_name == "positivity_rate" ~ "Daily positivity rate")
+#   
+#   #Modifying standard layout
+#   yaxis_plots[["title"]] <- yaxis_title
+#   
+#   # measure_name <- case_when(data_name == "tidyLFT" ~ "Daily number of tests")
+#   
+#   #Text for tooltip
+#   tooltip_trend <- c(paste0(pos_data$Health_Board_Name, 
+#                             "<br>", "Date: ", format(pos_data$new_date, "%d %b %y"),
+#                             "<br>", "Percentage Positive Tests ", pos_data$positive_pc))
+#   
+#   
+#   #Creating time trend plot
+#   plot_ly(data = pos_data %>% 
+#             group_by(Health_Board_Name), x = ~new_date) %>%
+#     add_lines(y = ~positive_pc, line = list(color = "#000000"),
+#               text = tooltip_trend, hoverinfo = "text",
+#               name = "Positive Percentage") %>%
+#     #Layout
+#     layout(margin = list(b = 80, t = 5), #to avoid labels getting cut out
+#            yaxis = yaxis_plots, xaxis = xaxis_plots,
+#            legend = list(x = 100, y = 0.5)) %>% #position of legend
+#     # leaving only save plot button
+#     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
+# }
 
 ################################################ Location stacked bar chart ###############################################
 # cases stacked bar chart
