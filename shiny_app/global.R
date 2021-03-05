@@ -30,7 +30,9 @@ library(shinycssloaders) #for loading icons, see line below
 ############################################### Data ###############################################
 
 tidyLFT <-readRDS("data/tidyLFT.rds")
+tidyLFT_expanded_df <-readRDS("data/tidyLFT_expanded_df.rds")
 CHICapture <-readRDS("data/CHICapture.rds")
+PosRate <- readRDS("data/positivity_rate.rds")
 TestNumbers <- readRDS("data/test_numbers.rds")
 TestNumbersRoll <- readRDS("data/roll_test_numbers.rds")
 TestNumbersChart <- readRDS("data/test_numbers_chart.rds")
@@ -116,7 +118,7 @@ data_tab_text_2 <- paste0("Data on the number of tests per individual covers tes
 
 ############################################### Palettes ###############################################
 
-# pal_overall <- c('#9B4393', '#0078D4','#000000', '#bdbdbd', '#bdbdbd', '#bdbdbd', '#7fcdbb')
+pal_overall <- c('#9B4393', '#0078D4','#000000', '#bdbdbd', '#bdbdbd', '#bdbdbd', '#7fcdbb')
 
 pal_tests <- c("NEGATIVE" = "#0078D4", "INCONCLUSIVE" = "#9B4393", 
                "POSITIVE" = "#000000")
@@ -125,6 +127,23 @@ pal_n_tests <- c("1" = "#082359", "2" = "#0078D4", "3" = "#9B4393",
                  "4" = "#dcb4e9", "5" = "#e9b4e0", "6" = "#00cdd4",
                  "7" = "#7fcdbb", "8" = "#7fcd99", "9" = "#94cd7f", 
                  "10+" = "#000000")
+
+pal_pos <- c("AYRSHIRE AND ARRAN" = "#082359", "BORDERS" = "#0078D4", 
+             "DUMFRIES AND GALLOWAY" = "#9B4393", "FIFE" = "#dcb4e9", 
+             "FORTH VALLEY" = "#e9b4e0", "GRAMPIAN" = "#00cdd4",
+             "GREATER GLASGOW AND CLYDE" = "#7fcdbb", "HIGHLAND" = "#7fcd99", 
+             "LANARKSHIRE" = "#94cd7f", "LOTHIAN" = "#cd9d7f", 
+             "ORKNEY" = "#bfcd7f", "SHETLAND" = "#cdbf7f", 
+             "TAYSIDE" = "#cdaa7f", "UNKNOWN" = "#000000", 
+             "WESTERN ISLES" = "#cd7f7f", 
+             "HEALTHCARE IMPROVEMENT SCOTLAND" = "#7fcd80", 
+             "NHS EDUCATION FOR SCOTLAND" = "#7fcdb0", 
+             "NHS NATIONAL SERVICES SCOTLAND " = "#7fb7cd", 
+             "NHS NATIONAL WAITING TIMES CENTRE/GOLDEN JUBILEE" = "#7f98cd", 
+             "NHS24" = "#917fcd", "PUBLIC HEALTH SCOTLAND" = "#ae7fcd", 
+             "SCOTTISH AMBULANCE SERVICE" = "#cd7fc5", 
+             "THE STATE HOSPITALS BOARD FOR SCOTLAND" = "#cd7f93", 
+             "CARE INSPECTORATE " = "#7fcd9a")
 
 
 ############################################### Plot Parameters ###############################################
