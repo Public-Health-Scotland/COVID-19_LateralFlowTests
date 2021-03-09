@@ -22,8 +22,13 @@ tagList(  #needed for shinyjs
              p("This is a work in progress dashboard on management information for Lateral 
                Flow results coming from the NSS Portal only. Development work is 
                ongoing to introduce all LFD results.  Information on PCR 
-               follow-up with be added by 1st March 2021."),
+               follow-up will be added by 1st March 2021."),
+            
              p("The NSS Portal tool is a self-service tool thus the data quality is variable."),
+             
+             p(strong("Please note that CHI seeding for negative results has 
+                      been turned off since 8th February 2021 so any individual 
+                      level information is likely to unreliable.")),
              
              h3("Further information"),
              
@@ -54,6 +59,10 @@ tagList(  #needed for shinyjs
         number of positive LFTs within Scotland and each NHS Board for each
         profession. You can use the filters to select the data you are interested in.
         You can also download the NHS board data as a csv using the download button."),
+      
+      p(paste0(hb_text_1)), 
+      
+      p(paste0(hb_text_2)), 
       
       wellPanel(
         column(4,
@@ -95,6 +104,13 @@ tagList(  #needed for shinyjs
       title = "Trend Charts",
       icon = icon("area-chart"),
       value = "summary",
+      
+      p(paste0(summary_text_1)), 
+      
+      p(paste0(summary_text_2)), 
+      
+      p(paste0(summary_text_3)), 
+      
       wellPanel(
         column(4,
                div(title = "Select profession.", # tooltip
@@ -133,6 +149,10 @@ tagList(  #needed for shinyjs
         You can also download the data as a csv using the download button."),
       
       p(paste0(CHIText)), 
+      
+      p(paste0(data_tab_text_1)), 
+      
+      p(paste0(data_tab_text_2)), 
       
       column(6,        
              selectInput("data_select", "Select the data you want to explore.",

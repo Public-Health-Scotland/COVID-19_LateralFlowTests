@@ -128,6 +128,6 @@ output$LFT_download_table_csv <- downloadHandler(
   filename ="LFT_data_extract.csv",
   content = function(file) {
     # This downloads only the data the user has selected using the table filters
-    write_csv(LFT_data_table()[input[["LFT_table_filtered_rows_all"]], ], file)
+    write_csv(data_table()[input[["LFT_hb_table_filtered_rows_all"]], ], file)
   }
 )
