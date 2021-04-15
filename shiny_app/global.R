@@ -29,9 +29,13 @@ library(shinycssloaders) #for loading icons, see line below
 
 ############################################### Data ###############################################
 
-tidyLFT <-readRDS("data/tidyLFT.rds")
-tidyLFT_expanded_df <-readRDS("data/tidyLFT_expanded_df.rds")
-CHICapture <-readRDS("data/CHICapture.rds")
+# weekly_chart <- readRDS("data/weekly_chart.rds")
+# weekly_chart_expanded_df <- readRDS("data/weekly_chart_expanded_df.rds")
+weekly_chart_complete <- readRDS("data/weekly_chart_complete.rds")
+tidyLFT <- readRDS("data/tidyLFT.rds")
+# tidyLFT_expanded_df <- readRDS("data/tidyLFT_expanded_df.rds")
+# tidyLFT_complete <- readRDS("data/tidyLFT_complete.rds")
+CHICapture <- readRDS("data/CHICapture.rds")
 PosRate <- readRDS("data/positivity_rate.rds")
 TestNumbers <- readRDS("data/test_numbers.rds")
 TestNumbersRoll <- readRDS("data/roll_test_numbers.rds")
@@ -40,6 +44,15 @@ TestNumbersChartRoll <- readRDS("data/roll_test_numbers_chart.rds")
 LFT_hb <- readRDS("data/LFT_hb.rds")
 LFT_sc <- readRDS("data/LFT_sc.rds")
 dates <- readRDS("data/dates.rds")
+lft_pcr <- readRDS("data/lft_pcr_hb.rds")
+
+table_1 <- readRDS("data/table_1.rds")
+table_2 <- readRDS("data/table_2.rds")
+table_3 <- readRDS("data/table_3.rds")
+table_5 <- readRDS("data/table_5.rds")
+table_6a <- readRDS("data/table_6a.rds")
+table_6b <- readRDS("data/table_6b.rds")
+table_7 <- readRDS("data/table_7.rds")
 
 ###############################################Functions###############################################
 
@@ -76,6 +89,10 @@ Work_Location <- c(unique(tidyLFT$LocationName))
 LFT_Profession <- c(sort(unique(LFT_hb$test_cohort_name)))
 Time_period <- c(sort(unique(LFT_hb$time_period)))
 LFT_NHS_Board <- c(sort(unique(LFT_hb$Health_Board_Name)))
+lft_pcr_hb <- c(sort(unique(lft_pcr$`NHS Board of Employment`)))
+lft_pcr_group <- c(sort(unique(lft_pcr$`Test Group`)))
+
+test_source <- c("UK Gov", "NSS")
 
 cumulative_dates <- dates %>% filter(data == "cumulative")
 last_7_dates <- dates %>% filter(data == "last_7_days")
@@ -96,54 +113,57 @@ hb_text_1 <- paste0("Cumulative data covers tests from ", cumulative_dates$min_d
 
 hb_text_2 <- paste0("Last 7 days covers tests from ", last_7_dates$min_date, " to ",  last_7_dates$max_date, ".")
 
-summary_text_1 <- paste0("Data for the daily number of tests by result and the
-                          number of tests by NHS Board covers tests from ",
-                          cumulative_dates$min_date, " to ",  cumulative_dates$max_date, ".")
+summary_text_1 <- paste0("Data for the weekly number of tests by result, weekly
+                         positivity rate and the
+                         number of tests by NHS Board covers tests from ",
+                         cumulative_dates$min_date, " to ",  chart_dates$max_date, ".")
 
 summary_text_2 <- paste0("Data for number of tests per individual by work location in latest week
-                          covers tests from ", chart_dates$min_date, " to ",
-                          chart_dates$max_date, ".")
+                         covers tests from ", chart_dates$min_date, " to ",
+                         chart_dates$max_date, ".")
 
 summary_text_3 <- paste0("Data for number of tests per
-                          individual by work location in latest rolling four week period
-                          covers tests from ", roll_chart_dates$min_date, " to ",
-                          roll_chart_dates$max_date, ".")
+                         individual by work location in latest rolling four week period
+                         covers tests from ", roll_chart_dates$min_date, " to ",
+                         roll_chart_dates$max_date, ".")
 
-data_tab_text_1 <- paste0("Data on the daily number of tests by result covers tests from
-                        ", cumulative_dates$min_date, " to ",  cumulative_dates$max_date, ".")
+data_tab_text_1 <- paste0("Data in the table below covers tests from ", 
+                          cumulative_dates$min_date, " to ",  cumulative_dates$max_date, ".")
 
 data_tab_text_2 <- paste0("Data on the number of tests per individual covers tests from
                           ", data_dates$min_date, " to ",  data_dates$max_date, ".")
-                        
+
 
 ############################################### Palettes ###############################################
 
 pal_overall <- c('#9B4393', '#0078D4','#000000', '#bdbdbd', '#bdbdbd', '#bdbdbd', '#7fcdbb')
 
-pal_tests <- c("NEGATIVE" = "#0078D4", "INCONCLUSIVE" = "#9B4393", 
-               "POSITIVE" = "#000000")
+pal_tests <- c("Negative" = "#0078D4", "Inconclusive" = "#9B4393", 
+               "Positive" = "#000000", "Insufficient" = "9b4347")
 
 pal_n_tests <- c("1" = "#082359", "2" = "#0078D4", "3" = "#9B4393", 
                  "4" = "#dcb4e9", "5" = "#e9b4e0", "6" = "#00cdd4",
                  "7" = "#7fcdbb", "8" = "#7fcd99", "9" = "#94cd7f", 
                  "10+" = "#000000")
 
-pal_pos <- c("AYRSHIRE AND ARRAN" = "#082359", "BORDERS" = "#0078D4", 
-             "DUMFRIES AND GALLOWAY" = "#9B4393", "FIFE" = "#dcb4e9", 
-             "FORTH VALLEY" = "#e9b4e0", "GRAMPIAN" = "#00cdd4",
-             "GREATER GLASGOW AND CLYDE" = "#7fcdbb", "HIGHLAND" = "#7fcd99", 
-             "LANARKSHIRE" = "#94cd7f", "LOTHIAN" = "#cd9d7f", 
-             "ORKNEY" = "#bfcd7f", "SHETLAND" = "#cdbf7f", 
-             "TAYSIDE" = "#cdaa7f", "UNKNOWN" = "#000000", 
-             "WESTERN ISLES" = "#cd7f7f", 
-             "HEALTHCARE IMPROVEMENT SCOTLAND" = "#7fcd80", 
-             "NHS EDUCATION FOR SCOTLAND" = "#7fcdb0", 
-             "NHS NATIONAL SERVICES SCOTLAND " = "#7fb7cd", 
-             "NHS NATIONAL WAITING TIMES CENTRE/GOLDEN JUBILEE" = "#7f98cd", 
-             "NHS24" = "#917fcd", "PUBLIC HEALTH SCOTLAND" = "#ae7fcd", 
-             "SCOTTISH AMBULANCE SERVICE" = "#cd7fc5", 
-             "THE STATE HOSPITALS BOARD FOR SCOTLAND" = "#cd7f93", 
-             "CARE INSPECTORATE " = "#7fcd9a")
+pal_pos <- c("Ayrshire and Arran" = "#082359", "Borders" = "#0078D4", 
+             "Dumfries and Galloway" = "#9B4393", "Fife" = "#dcb4e9", 
+             "Forth Valley" = "#e9b4e0", "Grampian" = "#00cdd4",
+             "Greater Glasgow and Clyde" = "#7fcdbb", "Highland" = "#7fcd99", 
+             "Lanarkshire" = "#94cd7f", "Lothian" = "#cd9d7f", 
+             "Orkney" = "#bfcd7f", "Shetland" = "#cdbf7f", 
+             "Tayside" = "#cdaa7f", "Unknown" = "#000000", 
+             "Western Isles" = "#cd7f7f", 
+             "Healthcare Improvement Scotland" = "#7fcd80", 
+             "NHS Education for Scotland" = "#7fcdb0", 
+             "NHS Quality Improvement Scotland" = "#7fcdb0", 
+             "NHS National Services Scotland" = "#7fb7cd", 
+             "National Facility" = "#7f98cd", 
+             "NHS24" = "#917fcd", "Public Health Scotland" = "#ae7fcd", 
+             "Scotland" = "932fcd", 
+             "Scottish Ambulance Service" = "#cd7fc5", 
+             "State Hospital" = "#cd7f93", 
+             "Care Inspectorate " = "#7fcd9a")
 
 
 ############################################### Plot Parameters ###############################################
