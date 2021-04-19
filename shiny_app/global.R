@@ -29,12 +29,8 @@ library(shinycssloaders) #for loading icons, see line below
 
 ############################################### Data ###############################################
 
-# weekly_chart <- readRDS("data/weekly_chart.rds")
-# weekly_chart_expanded_df <- readRDS("data/weekly_chart_expanded_df.rds")
 weekly_chart_complete <- readRDS("data/weekly_chart_complete.rds")
 tidyLFT <- readRDS("data/tidyLFT.rds")
-# tidyLFT_expanded_df <- readRDS("data/tidyLFT_expanded_df.rds")
-# tidyLFT_complete <- readRDS("data/tidyLFT_complete.rds")
 CHICapture <- readRDS("data/CHICapture.rds")
 PosRate <- readRDS("data/positivity_rate.rds")
 TestNumbers <- readRDS("data/test_numbers.rds")
@@ -113,19 +109,24 @@ hb_text_1 <- paste0("Cumulative data covers tests from ", cumulative_dates$min_d
 
 hb_text_2 <- paste0("Last 7 days covers tests from ", last_7_dates$min_date, " to ",  last_7_dates$max_date, ".")
 
-summary_text_1 <- paste0("Data for the weekly number of tests by result, weekly
-                         positivity rate and the
-                         number of tests by NHS Board covers tests from ",
+summary_text_1 <- paste0("Data for the weekly number of tests by result and 
+                         weekly positivity rate covers tests from ",
                          cumulative_dates$min_date, " to ",  chart_dates$max_date, ".")
 
-summary_text_2 <- paste0("Data for number of tests per individual by work location in latest week
+summary_text_2 <- paste0("Data for the number of tests by NHS Board covers tests from ",
+                         cumulative_dates$min_date, " to ",  cumulative_dates$max_date, ".")
+
+summary_text_3 <- paste0("Data for number of tests per individual by work location in latest week
                          covers tests from ", chart_dates$min_date, " to ",
                          chart_dates$max_date, ".")
 
-summary_text_3 <- paste0("Data for number of tests per
+summary_text_4 <- paste0("Data for number of tests per
                          individual by work location in latest rolling four week period
                          covers tests from ", roll_chart_dates$min_date, " to ",
                          roll_chart_dates$max_date, ".")
+
+lft_pcr_text_1 <- paste0("Data in the table below covers tests from ", 
+                          cumulative_dates$min_date, " to ",  cumulative_dates$max_date, ".")
 
 data_tab_text_1 <- paste0("Data in the table below covers tests from ", 
                           cumulative_dates$min_date, " to ",  cumulative_dates$max_date, ".")
@@ -139,7 +140,7 @@ data_tab_text_2 <- paste0("Data on the number of tests per individual covers tes
 pal_overall <- c('#9B4393', '#0078D4','#000000', '#bdbdbd', '#bdbdbd', '#bdbdbd', '#7fcdbb')
 
 pal_tests <- c("Negative" = "#0078D4", "Inconclusive" = "#9B4393", 
-               "Positive" = "#000000", "Insufficient" = "9b4347")
+               "Positive" = "#000000", "Insufficient" = "#9b4347")
 
 pal_n_tests <- c("1" = "#082359", "2" = "#0078D4", "3" = "#9B4393", 
                  "4" = "#dcb4e9", "5" = "#e9b4e0", "6" = "#00cdd4",

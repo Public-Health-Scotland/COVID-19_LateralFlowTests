@@ -76,8 +76,8 @@ LFT_hb_data_table <- reactive({
     rename(`Profession` = test_cohort_name, 
             `NHS Board` = Health_Board_Name,
             `Time` = time_period, 
-           `Number of Positive` = POSITIVE, 
-           `Number of LFT` = TOTAL, 
+           `Number of Positive` = Positive, 
+           `Number of LFT` = Total, 
            `Percentage Positive` = pc_positive) %>% 
     select(Profession, `NHS Board`, `Time`, `Number of LFT`, 
            `Number of Positive`, `Percentage Positive`) %>% 
@@ -122,6 +122,15 @@ output$LFT_hb_table_filtered <- DT::renderDataTable({
 
 
 ############################################### Data downloads ###############################################
+
+# Data download of data table.
+output$LFT_download_table_csv_scot <- downloadHandler(
+  filename ="LFT_data_extract_scotland.csv",
+  content = function(file) {
+    # This downloads only the data the user has selected using the table filters
+    write_csv(data_table()[input[["LFT_sc_table_filtered_rows_all"]], ], file)
+  }
+)
 
 # Data download of data table.
 output$LFT_download_table_csv <- downloadHandler(

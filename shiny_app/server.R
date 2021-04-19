@@ -18,11 +18,19 @@ function(input, output, session) {
   
   ###############################################.
   # NHS Boards data tab  
+  # source(file.path("daily_lft.R"),  local = TRUE)$value
+  
+  ###############################################.
+  # NHS Boards data tab  
   source(file.path("hb_tab.R"),  local = TRUE)$value
   
   ###############################################.
   # Summary trends tab  
   source(file.path("summary_tab.R"),  local = TRUE)$value
+  
+  ###############################################.
+  # Summary trends tab  
+  source(file.path("LFT_PCR.R"),  local = TRUE)$value
   
   ###############################################.
   # Data tab
