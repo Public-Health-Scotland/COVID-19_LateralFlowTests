@@ -128,7 +128,7 @@ output$LFT_download_table_csv_scot <- downloadHandler(
   filename ="LFT_data_extract_scotland.csv",
   content = function(file) {
     # This downloads only the data the user has selected using the table filters
-    write_csv(data_table()[input[["LFT_sc_table_filtered_rows_all"]], ], file)
+    write_csv(LFT_sc_data_table()[input[["LFT_sc_table_filtered_rows_all"]], ], file)
   }
 )
 
@@ -137,6 +137,6 @@ output$LFT_download_table_csv <- downloadHandler(
   filename ="LFT_data_extract.csv",
   content = function(file) {
     # This downloads only the data the user has selected using the table filters
-    write_csv(data_table()[input[["LFT_hb_table_filtered_rows_all"]], ], file)
+    write_csv(LFT_hb_data_table()[input[["LFT_hb_table_filtered_rows_all"]], ], file)
   }
 )
