@@ -47,6 +47,21 @@ data_table <- reactive({  # Change dataset depending on what user selected
 })
 
 
+#####################################################################
+## DataTable Function
+build_data_table_data_tb <- function(data, dom_elements = "tB",nrow=NULL, ...){
+  datatable(data, 
+            style = "bootstrap",
+            extensions = 'Buttons',
+            options = list(dom = dom_elements,
+                           pageLength = nrow,
+                           columnDefs = list(list(className = 'dt-right', targets = 1:(ncol(data)-1)),
+                                             list(className = 'dt-left', targets = 0)),
+                           initComplete = JS(paste0("function(settings, json) {",
+                                                    "$(this.api().table().header()).css({'background-color': '#433684', 'color': '#ffffff'});}"))),
+            rownames = FALSE,
+            class = "table-bordered table-hover", ...)
+}
 
 
 
@@ -56,17 +71,11 @@ output$table_filtered <- DT::renderDataTable({
   
  # Remove the underscore from column names in the table
   table_colnames  <-  gsub("_", " ", colnames(data_table()))
- 
-  DT::datatable(data_table(), style = 'bootstrap',
-                class = 'table-bordered table-condensed',
-                rownames = FALSE,
-                options = list(pageLength = 20,
-                               dom = 'tip',
-                               autoWidth = TRUE),
-                filter = "top",
-                colnames = table_colnames)
+  
+  build_data_table_data_tb(data_table(), filter= "top",
+                   dom = "tip", colnames = table_colnames)
+  
   }) # end of output
-
 
 ############################################### Data downloads ###############################################
 
