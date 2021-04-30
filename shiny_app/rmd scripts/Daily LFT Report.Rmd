@@ -34,17 +34,24 @@ lft_table_list <- c("Daily new positive and negative LFD Tests",
 Y <- 1
 ```
 
-##Daily LFT Report for `r params$date`
+```{r, eval = TRUE, echo = FALSE}
+asis_output(paste("## Daily LFT Report for",params$date))
+```
 
-
+```{r, eval = TRUE, echo = FALSE}
 ###Key Points
-* `r params$lft_kp_1`
-* `r params$lft_kp_2`
-* `r params$lft_kp_3`
+asis_output(paste0(
+params$lft_kp_1, "\n",
+params$lft_kp_2, "\n",
+params$lft_kp_3
+))
+```
 
-
-`r if(any(lft_table_list[1:3] %in% params$tables)){paste("###UK Government Data")}`
-
+```{r, eval = TRUE, echo = FALSE}
+if(any(lft_table_list[1:3] %in% params$tables)){
+  asis_output(paste("### UK Government Data"))
+  }
+```
 
 <!--Table 1-->
 ```{r, eval = TRUE, echo = FALSE}
@@ -83,7 +90,7 @@ asis_output("*Figures relate to individuals who have a valid CHI for all test re
 <!--Table 3-->
 ```{r, eval = TRUE, echo = FALSE}
 if(lft_table_list[3]  %in% params$tables){
-asis_output(paste("####",lft_table_list[3]))
+asis_output(paste("###",lft_table_list[3]))
 }
 ```
 
@@ -94,9 +101,11 @@ if(lft_table_list[3]  %in% params$tables){
 
 ```
 
-
-`r if(any(lft_table_list[4:7] %in% params$tables)){paste("###NSS Portal Data")}`
-
+```{r, eval = TRUE, echo = FALSE}
+if(any(lft_table_list[4:7] %in% params$tables)){
+  asis_output(paste("#### NSS Portal Data"))
+  }
+```
 
 <!--Table 4-->
 ```{r, eval = TRUE, echo = FALSE}
