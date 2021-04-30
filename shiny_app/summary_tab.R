@@ -4,14 +4,17 @@
 # Link action button click to modal launch 
 observeEvent(input$btn_dataset_modal, 
              
-               showModal(modalDialog(
-                 title = "What is the data source?",
-                 p("Name of Data source goes here"),
-                 p(glue("Date extracted: ")),
-                 p("Text goes here") ,    
-                 size = "m",
-                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-             ) # end of observe event for modal
+             showModal(modalDialog(
+               title = "What is the data source?",
+               p("ECOSS (Electronic Communication of Surveillance in Scotland) Database"),
+               p(glue("Date extracted: {as.character(dates[1,3])}")),
+               p("For a small number of laboratory results initially reported as positive on 
+                   subsequent additional testing the laboratory result may be amended to negative,
+                   and the individual no longer managed as a confirmed case."),    
+               size = "m",
+               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+) # end of observe event for modal
+
 
 
 ###############################################  Update filters ############################################### 

@@ -6,9 +6,11 @@ observeEvent(input$btn_dataset_modal,
              
              showModal(modalDialog(
                title = "What is the data source?",
-               p("Name of Data source goes here"),
-               p(glue("Date extracted: ")),
-               p("Text goes here") ,    
+               p("ECOSS (Electronic Communication of Surveillance in Scotland) Database"),
+               p(glue("Date extracted: {as.character(dates[1,3])}")),
+               p("For a small number of laboratory results initially reported as positive on 
+                   subsequent additional testing the laboratory result may be amended to negative,
+                   and the individual no longer managed as a confirmed case."),    
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
 ) # end of observe event for modal
@@ -90,53 +92,57 @@ LFT_hb_data_table <- reactive({
 
 ############################################### Table ###############################################
 
-output$LFT_sc_table_filtered <- DT::renderDataTable({
+### Functions to build the tables
+build_hbtab_data_table <- function(data, dom_elements = "tB",nrow=NULL, ...){
   
-  # Remove the underscore from column names in the table
-  table_colnames  <-  gsub("_", " ", colnames(LFT_sc_data_table()))
+  ## Table Column Names
+  table_colnames  <-  gsub("_", " ", colnames(data))
   
-  DT::datatable(LFT_sc_data_table(), style = 'bootstrap',
-                class = 'table-bordered table-condensed',
-                rownames = FALSE,
-                options = list(pageLength = 20,
-                               dom = 'tip',
-                               autoWidth = TRUE),
-                filter = "top",
-                colnames = table_colnames)
-}) # end of output
+  datatable(data, 
+            style = "bootstrap",
+            extensions = 'Buttons',
+            options = list(dom = dom_elements,
+                           pageLength = nrow,
+                           buttons = list(
+                             list(
+                               extend = "copy", 
+                               className = "btn btn-primary",
+                               exportOptions = list(
+                                 modifier = list(
+                                   page="all", search ="none"
+                                 ))
+                             ),
+                             list(
+                               extend = "csv",
+                               className = "btn btn-primary",
+                               exportOptions = list(
+                                 modifier = list(
+                                   page="all", search ="none"
+                                 ))
+                             ),
+                             list(
+                               extend = "excel",
+                               className = "btn btn-primary",
+                               exportOptions = list(
+                                 modifier = list(
+                                   page="all", search ="none"
+                                 ))
+                             )),
+                           columnDefs = list(list(className = 'dt-right', targets = 3:(ncol(data)-1)),
+                                             list(className = 'dt-left', targets = 0:2)),
+                           initComplete = JS(paste0("function(settings, json) {",
+                                                    "$(this.api().table().header()).css({'background-color': '#433684', 'color': '#ffffff'});}"))),
+            rownames = FALSE, colnames = table_colnames,
+            class = "table-bordered table-hover", ...)
+}
 
-output$LFT_hb_table_filtered <- DT::renderDataTable({
-  
-  # Remove the underscore from column names in the table
-  table_colnames  <-  gsub("_", " ", colnames(LFT_hb_data_table()))
-  
-  DT::datatable(LFT_hb_data_table(), style = 'bootstrap',
-                class = 'table-bordered table-condensed',
-                rownames = FALSE,
-                options = list(pageLength = 20,
-                               dom = 'tip',
-                               autoWidth = TRUE),
-                filter = "top",
-                colnames = table_colnames)
-}) # end of output
 
 
-############################################### Data downloads ###############################################
+output$LFT_sc_table_filtered <- renderDataTable({ 
+  build_hbtab_data_table(LFT_sc_data_table()) 
+})
 
-# Data download of data table.
-output$LFT_download_table_csv_scot <- downloadHandler(
-  filename ="LFT_data_extract_scotland.csv",
-  content = function(file) {
-    # This downloads only the data the user has selected using the table filters
-    write_csv(data_table()[input[["LFT_sc_table_filtered_rows_all"]], ], file)
-  }
-)
-
-# Data download of data table.
-output$LFT_download_table_csv <- downloadHandler(
-  filename ="LFT_data_extract.csv",
-  content = function(file) {
-    # This downloads only the data the user has selected using the table filters
-    write_csv(data_table()[input[["LFT_hb_table_filtered_rows_all"]], ], file)
-  }
-)
+output$LFT_hb_table_filtered <- renderDataTable({
+  build_hbtab_data_table(LFT_hb_data_table(), 
+                         dom = "tipB", filter = "top", nrow = 15) 
+}, server = FALSE)

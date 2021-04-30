@@ -5,7 +5,8 @@ tagList(  #needed for shinyjs
   navbarPage(
     id = "intabset",# id used for jumping between tabs
     title = div(
-      tags$a(img(src = "phs-logo.png", height = 40), href = "https://www.publichealthscotland.scot/"),
+      tags$a(img(src = "phs-logo.png", height = 40), 
+             href = "https://www.publichealthscotland.scot/",  target = "blank_"),
       style = "position: relative; top: -5px;"),
     windowTitle = "PHS COVID-19 Lateral Flow Tests",    #title for browser tab
     header = tags$head(includeCSS("www/styles.css"),  # CSS styles
@@ -47,139 +48,40 @@ tagList(  #needed for shinyjs
                    href = "mailto:PHS.Covid19Data&Analytics@phs.scot", # needs updated
                    "PHS.Covid19Data&Analytics@phs.scot", # needs updated
                    class = "externallink")),".")
-             ), #tabPanel bracket
+    ), #tabPanel bracket
     
     ############################################### Daily LFT Report ###############################################
     
-    # tabPanel(
-    #   title = "Daily LFT Report",
-    #   icon = icon("table"),
-    #   
-    #   p("Please note the data in this tab uses NHS Board of residence."), 
-    #   
-    #   h3("Section A - UK Govt"),
-    #   
-    #   
-    #   fluidRow(
-    #     h4("Table 1: Daily new positive and negative LFD Tests"),
-    #     
-    #     mainPanel(width = 7,
-    #               DT::dataTableOutput("LFT_table_1")
-    #               
-    #     )), 
-    #     
-    #     column(4, downloadButton('LFT_download_table_1_csv', 'Download data')), 
-    #   
-    #   br(),
-    #   br(), 
-    #   br(), 
-    #   
-    #   fluidRow(
-    #   h4("Table 2: Total number of LFD Tested Individuals*"),
-    #   
-    #   mainPanel(width = 7,
-    #             DT::dataTableOutput("LFT_table_2")
-    #             
-    #   )), 
-    #   
-    #   p("*The following figures relate to individuals who have a valid CHI for 
-    #     all test results. Tests without valid CHI are excluded."), 
-    #   
-    #   column(4, downloadButton('LFT_download_table_2_csv', 'Download data')), 
-    #   
-    #   br(),
-    #   br(),
-    #   br(),
-    #   
-    #   fluidRow(
-    #     h4("Table 3: Cumulative Number of LFD Tests by NHS Board"),
-    #     
-    #     mainPanel(width = 9,
-    #             DT::dataTableOutput("LFT_table_3")
-    #             
-    #   )), 
-    #   
-    #   column(4, downloadButton('LFT_download_table_3_csv', 'Download data')), 
-    #   
-    #   br(),
-    #   br(),
-    #   br(),
-    #   
-    #   # mainPanel(width = 9,
-    #   #           DT::dataTableOutput("LFT_table_4")
-    #   #           
-    #   # ), 
-    #   # 
-    #   # column(4, downloadButton('LFT_download_table_4_csv', 'Download data')), 
-    #   
-    #   h3("Section B - NSS Portal"),
-    #   
-    #   fluidRow(
-    #     h4("Table 5: Daily new positive and negative LFD Tests via NSS Portal"),
-    #     
-    #     mainPanel(width = 9,
-    #             DT::dataTableOutput("LFT_table_5")
-    #             
-    #   )), 
-    #   
-    #   p("The NSS Portal data is dynamic and subject to change with each new LFD 
-    #     programme roll-out. Test results are 
-    #     submitted via the NSS Portal app where users manually input their test 
-    #     results."), 
-    #   
-    #   
-    #   column(4, downloadButton('LFT_download_table_5_csv', 'Download data')), 
-    #   
-    #   br(),
-    #   br(),
-    #   br(),
-    #   
-    #   fluidRow(
-    #     h4("Table 6a: Cumulative number of LFD Tests by Category carried out via NSS Portal"),
-    #     
-    #     mainPanel(width = 9,
-    #             DT::dataTableOutput("LFT_table_6a")
-    #             
-    #   )), 
-    #   
-    #   column(4, downloadButton('LFT_download_table_6a_csv', 'Download data')), 
-    #   
-    #   br(),
-    #   br(),
-    #   br(),
-    #   
-    #   fluidRow(
-    #     h4("Table 6b: Cumulative number of LFD Tests and Individuals by Category carried out via NSS Portal"),
-    #     
-    #     mainPanel(width = 9,
-    #             DT::dataTableOutput("LFT_table_6b")
-    #             
-    #   )), 
-    #   
-    #   p("*The following figures relate to individuals who have a valid CHI for 
-    #     all test results. Tests without valid CHI are excluded."), 
-    #   
-    #   column(4, downloadButton('LFT_download_table_6b_csv', 'Download data')), 
-    #   
-    #   br(),
-    #   br(),
-    #   br(),
-    #   
-    #   fluidRow(
-    #     h4("Table 7: Cumulative number of LFD Tests and Individuals by Health Board carried out via NSS Portal"),
-    #     
-    #     mainPanel(width = 9,
-    #             DT::dataTableOutput("LFT_table_7")
-    #             
-    #   )), 
-    #   
-    #   p("*The following figures relate to individuals who have a valid CHI for 
-    #     all test results. Tests without valid CHI are excluded."), 
-    #   
-    #   column(4, downloadButton('LFT_download_table_7_csv', 'Download data')) # tabpanel bracket
-    #   
-    #   ), 
-  
+    tabPanel(
+      title = "Daily LFT Report",
+      icon = icon("book-medical"),
+      h3("Daily LFT Report"),
+      p(paste0("This section allows you to view the dialy LFD data, and generate a report.",
+               "You can choose the report date and which outputs to include using the filters below.",
+               "Please note the data in this tab use NHS Board of residence.")),
+      hr(),
+      fluidRow(
+        column(width = 3, 
+               shiny::dateInput("lft_date_select", label = "Report Date", value = lft_date_range$max,
+                                min = lft_date_range$min, max = lft_date_range$max)
+        ),
+        column(width = 5, 
+               pickerInput("lft_table_select", label = "Outputs", 
+                           choices = lft_table_list, multiple = TRUE, 
+                           selected = lft_table_list,width = "100%")
+        ),
+        column(width = 2,offset = 2, 
+               downloadButton("lft_report_render_dwnl", 
+                              label = "Generate Report",
+                              class = "btn btn-primary",style = "float:right;margin-bottom:10px"),
+               downloadButton("lft_excel_dwnl", 
+                              label = "Download Excel Tables",
+                              class = "btn btn-success",style = "float:right;"))),
+      hr(),
+      uiOutput("daily_lft_tab"),
+      br3(), br3()
+    ),
+    
     
     ############################################### LFT Tests ###############################################
     
@@ -187,6 +89,7 @@ tagList(  #needed for shinyjs
       title = "NHS Board Data",
       icon = icon("table"),
       
+      h3("NHS Health Board Data"),
       p("This section allows you to view the total number of LFTs and the 
         number of positive LFTs within Scotland and each NHS Board for each
         profession. You can use the filters to select the data you are interested in.
@@ -200,46 +103,62 @@ tagList(  #needed for shinyjs
       
       p(paste0(hb_text_2)), 
       
-      wellPanel(
-        column(4,
+      hr(),
+      fluidRow(
+        column(width = 4,
                div(title = "Select profession", # tooltip
-                   selectInput("LFT_profession_select", label = h3("Select the data you want to explore."),
+                   selectInput("LFT_profession_select", label = "Profession",
                                choices = LFT_Profession))),
-        column(5,
+        column(width = 5,
                div(title = "time_period_select", # tooltip
-                   selectInput("Time_select", label = h3("Select the time period you want to explore."),
-                               choices = Time_period)))#,
+                   selectInput("Time_select", label = "Time Period",
+                               choices = Time_period))),
         
-        # column(4,
-        #        
-        #        actionButton("btn_dataset_modal", paste0("Data source: ", "ECOSS"), icon = icon('question-circle'))), 
-        
-        
-      ), #wellPanel bracket
-
-      mainPanel(width = 9,
-                DT::dataTableOutput("LFT_sc_table_filtered")
-
-      ), 
+        column(width = 2, offset = 1, br(), 
+               actionButton("btn_dataset_modal", paste0("Data source: ", "ECOSS"), 
+                            icon = icon('question-circle'),
+                            class = "btn btn-warning", style = "float:right;"))
+      ), #fluidRow bracket 
       
-      column(4, downloadButton('LFT_download_table_csv_scot', 'Download data')), 
+      hr(),
+      dataTableOutput("LFT_sc_table_filtered"),
+      br3(),
+      dataTableOutput("LFT_hb_table_filtered"),
+      br3(), br3(), br3()
       
-      br(), 
-      br(), 
-      br(), 
-      
-      
-      mainPanel(width = 12,
-                DT::dataTableOutput("LFT_hb_table_filtered")# mainPanel bracket
-                
-      ), 
-      
-      column(4, downloadButton('LFT_download_table_csv', 'Download data')), 
-      
-      br()# tabpanel bracket
-      
-    ), 
+    ), #tabPanel bracket
     
+    tabPanel(
+      title = "Primary Care and Healthcare Workers",
+      icon = icon("user-md"),
+      
+      h3("Primary Care and Healthcare Worker Data"),
+      p("This section allows you to view the cumulative number of LFTs taken by
+        Primary Care Workers and Healthcare Workers by their submitted Job Role."),
+      strong("Caveats:"),
+      tags$i(
+        tags$ol(
+          tags$li("The data in this tab use NHS Board of employment to allocate board
+                  level data."),
+          tags$li("These data are based on the Job Role submitted by the individual.
+                  Please note that this field is incomplete, and completeness levels vary
+                  between professions.", br(), "The percent of job roles recorded is included
+                  for both Primary Care Workers and Healthcare Workers as an indication of this.")
+        )), # italics bracket  (caveats)
+      
+      hr(),
+      fluidRow(
+        column(width = 4,
+               prettyRadioButtons("pc_hcw_radio_select", label = "Profession", 
+                                  choices = c("Primary Care Workers", "Healthcare Workers"),
+                                  inline = TRUE, shape = "curve", icon = icon ("check"),
+                                  thick = FALSE, animation = "pulse")),
+        uiOutput("pc_hwc_tab_widget_ui")
+      ),
+      hr(),
+      uiOutput("pc_hcw_tab_main_ui"),
+      br3(), br3(), br3()
+    ), # tabPanel bracket
     
     
     ############################################### Trend Charts ###############################################
@@ -285,13 +204,12 @@ tagList(  #needed for shinyjs
       )# mainPanel bracket
       
     ),# tabpanel bracket
-    
     ############################################### LFT to PCR ###############################################
     
     tabPanel(
       title = "LFT to PCR",
       icon = icon("table"),
-
+      
       p("This section shows individuals who have had a positive LFT
          who go on to have a PCR test within the following 48 hours. The table
         below shows the number of individuals with positive LFTs and their
@@ -312,30 +230,27 @@ tagList(  #needed for shinyjs
         basis"), 
       
       p(paste0(lft_pcr_text_1)), 
-
-      wellPanel(
+      
+      fluidRow(
         column(4,
-             div(title = "Select profession.", # tooltip
-                 selectInput("LFT_PCR_profession_select", label = h3("Select the data you want to explore."), 
-                             choices = lft_pcr_group))),
+               div(title = "Select profession.", # tooltip
+                   selectInput("LFT_PCR_profession_select", label = "Profession", 
+                               choices = lft_pcr_group))),
+        
+        column(4,
+               div(title = "Select work location", # tooltip
+                   pickerInput("LFT_PCR_hb_select", label = "Health Board",
+                               choices = NULL,
+                               selected = NULL,
+                               options = list(`actions-box` = TRUE),
+                               multiple = TRUE)))#,
+      ), #fluidRow bracket
       
-      column(4,
-             div(title = "Select work location", # tooltip
-                 pickerInput("LFT_PCR_hb_select", label = h3("Select the data you want to explore."),
-                             choices = NULL,
-                             selected = NULL,
-                             options = list(`actions-box` = TRUE),
-                             multiple = TRUE)))#,
-      ), #wellPanel bracket
+      dataTableOutput("LFT_PCR_table_filtered"),
       
-      mainPanel(width = 9,
-                DT::dataTableOutput("LFT_PCR_table_filtered")
-                
-      ), 
+      br3(), br3(), br3()
       
-      column(4, downloadButton('LFT_PCR_download_table_csv', 'Download data'))
-      
-    ), 
+    ), # tabPanel bracket
     
     ############################################### Data ###############################################
     tabPanel(
@@ -355,13 +270,19 @@ tagList(  #needed for shinyjs
       p(paste0(data_tab_text_1)), 
       
       column(6,        
-             selectInput("data_select", label = h3("Select the data you want to explore."),
+             selectInput("data_select", label = "Select the data you want to explore",
                          choices = data_list_data_tab)),  
       
-      column(6, downloadButton('download_table_csv', 'Download data')),
-      
       mainPanel(width = 12,
-                DT::dataTableOutput("table_filtered"))
+                DT::dataTableOutput("table_filtered"),
+      
+      downloadButton('download_table_csv', 
+                               'Download data',
+                               class = "btn btn-primary",
+                               style = "float:right;margin-bottom:10px"),
+      br3(),br3(),br3()
+      
+      ) #mainPanel
       
       )# tabpanel bracket
     

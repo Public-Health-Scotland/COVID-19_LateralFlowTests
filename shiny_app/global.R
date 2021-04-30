@@ -3,7 +3,7 @@
 ############################################### Dates ###############################################
 
 #publication date
-pub_date <- as.Date("2021-01-27")
+pub_date <- as.Date("2021-04-30")
 
 
 ############################################### Packages ###############################################
@@ -23,6 +23,12 @@ library(tidytable)
 library(glue) #for pasting strings
 library(shinymanager)
 library(shinycssloaders) #for loading icons, see line below
+library(lubridate)
+library(rmarkdown)
+library(knitr)
+library(writexl)
+library(janitor)
+library(magrittr)
 # it uses github version devtools::install_github("andrewsali/shinycssloaders")
 # This is to avoid issues with loading symbols behind charts and perhaps with bouncing of app
 
@@ -42,6 +48,10 @@ LFT_sc <- readRDS("data/LFT_sc.rds")
 dates <- readRDS("data/dates.rds")
 lft_pcr <- readRDS("data/lft_pcr_hb.rds")
 
+pc_test_reasons <- readRDS("data/PrimaryCare_TestReasons_sc.rds")
+hcw_test_reasons <- readRDS("data/HCW_TestReasons_hb.rds")
+hcw_test_reasons_hosp <- readRDS("data/HCW_TestReasons_hospital.rds")
+
 table_1 <- readRDS("data/table_1.rds")
 table_2 <- readRDS("data/table_2.rds")
 table_3 <- readRDS("data/table_3.rds")
@@ -49,6 +59,20 @@ table_5 <- readRDS("data/table_5.rds")
 table_6a <- readRDS("data/table_6a.rds")
 table_6b <- readRDS("data/table_6b.rds")
 table_7 <- readRDS("data/table_7.rds")
+
+uk_gov_av <- table_1 %>% 
+  filter(COVID.19 == "Total number of newly reported LFD Tests in NHS and UK Govt testing sites")%>%
+  mutate(Daily = as.numeric(gsub(",","",Daily))) %>%
+  summarise(n_av = format(round_half_up(mean(Daily),0), big.mark = ","), 
+            n_max = format(max(Daily),big.mark = ","))
+
+nss_portal_av <- table_5 %>% 
+  filter(COVID.19 == "Total number of newly reported LFD Tests via NSS Portal")%>%
+  mutate(Daily = as.numeric(gsub(",","",Daily))) %>%
+  summarise(n_av = format(round_half_up(mean(Daily),0), big.mark = ","), 
+            n_max = format(max(Daily),big.mark = ","))
+
+
 
 ###############################################Functions###############################################
 
@@ -76,6 +100,8 @@ plot_cut_missing <- function(title_plot, plot_output, extra_content = NULL) {
     fluidRow(column(6, withSpinner(plotlyOutput(plot_output))))
   )
 }
+
+br3<-function(){tagList(br(),br(),br())}
 
 
 ############################################### Data lists ###############################################
@@ -133,6 +159,19 @@ data_tab_text_1 <- paste0("Data in the table below covers tests from ",
 
 data_tab_text_2 <- paste0("Data on the number of tests per individual covers tests from
                           ", data_dates$min_date, " to ",  data_dates$max_date, ".")
+
+############################################### LFT Report Tab #########################################
+lft_date_range <- list(min = min(as_date(table_1$day)),
+                       max = max(as_date(table_1$day))) 
+
+lft_table_list <- c("Daily new positive and negative LFD Tests",
+                    "Total number of LFD Tested Individuals",
+                    "Cumulative Number of LFD Tests by NHS Board",
+                    "Daily new positive and negative LFD Tests via NSS Portal",
+                    "Cumulative number of LFD Tests by Category carried out via NSS Portal",
+                    "Cumulative number of LFD Tests and Individuals by Category carried out via NSS Portal",
+                    "Cumulative number of LFD Tests and Individuals by Health Board carried out via NSS Portal")
+
 
 
 ############################################### Palettes ###############################################

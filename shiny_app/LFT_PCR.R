@@ -1,3 +1,45 @@
+#####################################################################
+## DataTable Function
+build_data_table <- function(data, dom_elements = "tB",nrow=NULL, ...){
+  datatable(data, 
+            style = "bootstrap",
+            extensions = 'Buttons',
+            options = list(dom = dom_elements,
+                           pageLength = nrow,
+                           buttons = list(
+                             list(
+                               extend = "copy", 
+                               className = "btn btn-primary",
+                               exportOptions = list(
+                                 modifier = list(
+                                   page="all", search ="none"
+                                 ))
+                             ),
+                             list(
+                               extend = "csv",
+                               className = "btn btn-primary",
+                               exportOptions = list(
+                                 modifier = list(
+                                   page="all", search ="none"
+                                 ))
+                             ),
+                             list(
+                               extend = "excel",
+                               className = "btn btn-primary",
+                               exportOptions = list(
+                                 modifier = list(
+                                   page="all", search ="none"
+                                 ))
+                             )),
+                           columnDefs = list(list(className = 'dt-right', targets = 1:(ncol(data)-1)),
+                                             list(className = 'dt-left', targets = 0)),
+                           initComplete = JS(paste0("function(settings, json) {",
+                                                    "$(this.api().table().header()).css({'background-color': '#433684', 'color': '#ffffff'});}"))),
+            rownames = FALSE,
+            class = "table-bordered table-hover", ...)
+}
+
+
 ###############################################  Update filters ############################################### 
 
 observeEvent(input$LFT_PCR_profession_select, {
@@ -26,29 +68,26 @@ LFT_PCR_data_table <- reactive({
 
 ############################################### Table ###############################################
 
-output$LFT_PCR_table_filtered <- DT::renderDataTable({
-  
-  # Remove the underscore from column names in the table
+# output$LFT_PCR_table_filtered <- DT::renderDataTable({
+#   
+#   # Remove the underscore from column names in the table
+#   table_colnames  <-  gsub("_", " ", colnames(LFT_PCR_data_table()))
+#   
+#   DT::datatable(LFT_PCR_data_table(), style = 'bootstrap',
+#                 class = 'table-bordered table-condensed',
+#                 rownames = FALSE,
+#                 options = list(pageLength = 20,
+#                                dom = 'tip',
+#                                autoWidth = TRUE),
+#                 filter = "top",
+#                 colnames = table_colnames)
+# }) # end of output
+
+output$LFT_PCR_table_filtered <- renderDataTable({
   table_colnames  <-  gsub("_", " ", colnames(LFT_PCR_data_table()))
   
-  DT::datatable(LFT_PCR_data_table(), style = 'bootstrap',
-                class = 'table-bordered table-condensed',
-                rownames = FALSE,
-                options = list(pageLength = 20,
-                               dom = 'tip',
-                               autoWidth = TRUE),
-                filter = "top",
-                colnames = table_colnames)
-}) # end of output
+  build_data_table(LFT_PCR_data_table(), filter= "top",
+                   dom = "tipB", colnames = table_colnames)
+  
+}, server = FALSE)
 
-
-############################################### Data downloads ###############################################
-
-# Data download of data table. 
-output$LFT_PCR_download_table_csv <- downloadHandler(
-  filename ="LFT_PCR_data_extract.csv",
-  content = function(file) {
-    # This downloads only the data the user has selected using the table filters
-    write_csv(LFT_PCR_data_table()[input[["LFT_PCR_table_filtered_rows_all"]], ], file) 
-  } 
-)
