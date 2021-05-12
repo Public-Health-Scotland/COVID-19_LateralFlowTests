@@ -9,6 +9,8 @@ params:
   table_1_reac: NA
   table_2_reac: NA
   table_3_reac: NA
+  table_4a_reac: NA
+  table_4b_reac: NA
   table_5_reac: NA
   table_6a_reac: NA
   table_6b_reac: NA
@@ -25,6 +27,8 @@ lft_table_list <- c("Daily new positive and negative LFD Tests",
                     "Total number of LFD Tested Individuals",
                     "Cumulative Number of LFD Tests by NHS Board",
                     "Daily new positive and negative LFD Tests via NSS Portal",
+                    "Cumulative number of LFD Tests by Category carried out via UK Govt", 
+                    "Cumulative number of LFD Tests and Individuals by Category carried out via UK Govt", 
                     "Cumulative number of LFD Tests by Category carried out via NSS Portal",
                     "Cumulative number of LFD Tests and Individuals by Category carried out via NSS Portal",
                     "Cumulative number of LFD Tests and Individuals by Health Board carried out via NSS Portal")
@@ -66,7 +70,7 @@ params$lft_kp_3
 -->
 
 ```{r, eval = TRUE, echo = FALSE}
-if(any(lft_table_list[1:3] %in% params$tables)){
+if(any(lft_table_list[1:5] %in% params$tables)){
   asis_output(paste("### UK Government Data"))
   }
 ```
@@ -119,12 +123,6 @@ if(lft_table_list[3]  %in% params$tables){
 
 ```
 
-```{r, eval = TRUE, echo = FALSE}
-if(any(lft_table_list[4:7] %in% params$tables)){
-  asis_output(paste("### NSS Portal Data"))
-  }
-```
-
 <!--Table 4-->
 ```{r, eval = TRUE, echo = FALSE}
 if(lft_table_list[4]  %in% params$tables){
@@ -134,16 +132,10 @@ asis_output(paste("####",lft_table_list[4]))
 
 ``` {r echo=FALSE} 
 if(lft_table_list[4]  %in% params$tables){
-  params$table_5_reac %>% knitr::kable(format = "markdown")
+  params$table_4a_reac %>% knitr::kable(format = "markdown")
   }
 
 ```
-``` {r, eval = TRUE, echo = FALSE}
-if(lft_table_list[4]  %in% params$tables){
-asis_output("*The NSS Portal data is dynamic and subject to change with each new LFD programme roll-out. Test results are submitted via the NSS Portal app where users manually input their test results.*")
-}
-````
-
 
 <!--Table 5-->
 ```{r, eval = TRUE, echo = FALSE}
@@ -154,9 +146,21 @@ asis_output(paste("####",lft_table_list[5]))
 
 ``` {r echo=FALSE} 
 if(lft_table_list[5]  %in% params$tables){
-  params$table_6a_reac %>% knitr::kable(format = "markdown")
+  params$table_4b_reac %>% knitr::kable(format = "markdown")
   }
 
+```
+
+``` {r, eval = TRUE, echo = FALSE}
+if(lft_table_list[5]  %in% params$tables){
+asis_output("*Figures relate to individuals who have a valid CHI for all test results. Tests without valid CHI are excluded.*")
+}
+````
+
+```{r, eval = TRUE, echo = FALSE}
+if(any(lft_table_list[6:9] %in% params$tables)){
+  asis_output(paste("#### NSS Portal Data"))
+  }
 ```
 
 <!--Table 6-->
@@ -168,16 +172,16 @@ asis_output(paste("####",lft_table_list[6]))
 
 ``` {r echo=FALSE} 
 if(lft_table_list[6]  %in% params$tables){
-  params$table_6b_reac %>% knitr::kable(format = "markdown")
+  params$table_5_reac %>% knitr::kable(format = "markdown")
   }
 
 ```
-
 ``` {r, eval = TRUE, echo = FALSE}
 if(lft_table_list[6]  %in% params$tables){
-asis_output("*Figures relate to individuals who have a valid CHI for all test results. Tests without valid CHI are excluded.*")
+asis_output("*The NSS Portal data is dynamic and subject to change with each new LFD programme roll-out. Test results are submitted via the NSS Portal app where users manually input their test results.*")
 }
 ````
+
 
 <!--Table 7-->
 ```{r, eval = TRUE, echo = FALSE}
@@ -188,12 +192,46 @@ asis_output(paste("####",lft_table_list[7]))
 
 ``` {r echo=FALSE} 
 if(lft_table_list[7]  %in% params$tables){
+  params$table_6a_reac %>% knitr::kable(format = "markdown")
+  }
+
+```
+
+<!--Table 8-->
+```{r, eval = TRUE, echo = FALSE}
+if(lft_table_list[8]  %in% params$tables){
+asis_output(paste("####",lft_table_list[8]))
+}
+```
+
+``` {r echo=FALSE} 
+if(lft_table_list[8]  %in% params$tables){
+  params$table_6b_reac %>% knitr::kable(format = "markdown")
+  }
+
+```
+
+``` {r, eval = TRUE, echo = FALSE}
+if(lft_table_list[8]  %in% params$tables){
+asis_output("*Figures relate to individuals who have a valid CHI for all test results. Tests without valid CHI are excluded.*")
+}
+````
+
+<!--Table 9-->
+```{r, eval = TRUE, echo = FALSE}
+if(lft_table_list[9]  %in% params$tables){
+asis_output(paste("####",lft_table_list[9]))
+}
+```
+
+``` {r echo=FALSE} 
+if(lft_table_list[9]  %in% params$tables){
   params$table_7_reac %>% knitr::kable(format = "markdown")
   }
 ```
 
 ``` {r, eval = TRUE, echo = FALSE}
-if(lft_table_list[7]  %in% params$tables){
+if(lft_table_list[9]  %in% params$tables){
 asis_output("*Figures relate to individuals who have a valid CHI for all test results. Tests without valid CHI are excluded.*")
 }
 ````
