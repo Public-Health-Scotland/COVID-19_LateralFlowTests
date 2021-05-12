@@ -56,9 +56,11 @@ tagList(  #needed for shinyjs
       title = "Daily LFT Report",
       icon = icon("book-medical"),
       h3("Daily LFT Report"),
-      p(paste0("This section allows you to view the dialy LFD data, and generate a report.",
+      p(paste0("This section allows you to view the daily LFD data, and generate a report.",
                "You can choose the report date and which outputs to include using the filters below.",
                "Please note the data in this tab use NHS Board of residence.")),
+      
+      p(paste0("Please note that this tab is currently only updated every Friday.")),
       hr(),
       fluidRow(
         column(width = 3, 
@@ -128,9 +130,16 @@ tagList(  #needed for shinyjs
       
     ), #tabPanel bracket
     
-    tabPanel(
+    ############################################### PC HCW ###############################################
+    
+    
+    navbarMenu(
       title = "Primary Care and Healthcare Workers",
       icon = icon("user-md"),
+    
+    tabPanel(
+      title = "Explore Data Tables",
+      icon = icon("table"),
       
       h3("Primary Care and Healthcare Worker Data"),
       p("This section allows you to view the cumulative number of LFTs taken by
@@ -160,50 +169,82 @@ tagList(  #needed for shinyjs
       br3(), br3(), br3()
     ), # tabPanel bracket
     
+    ####### HCW Trends ####
+    tabPanel(
+      title = "Explore Trends: Healthcare Workers",
+      icon = icon("area-chart"),
+      
+      h3("Healthcare Worker Trend Data"),
+      p("This section allows you to explore any trends of LFTs taken by 
+        Healthcare Workers by their submitted Job Role and/or Work Location."),
+      strong("Caveats:"),
+      tags$i(
+        tags$ol(
+          tags$li("The data in this tab use NHS Board of employment to allocate board
+                  level data."),
+          tags$li("These data are based on the Job Role submitted by the individual.
+                  Please note that this field is incomplete, and completeness levels vary
+                  between professions.", br(), "The percent of job roles recorded is included
+                  for both Primary Care Workers and Healthcare Workers as an indication of this.")
+        )), # italics bracket  (caveats)
+      
+      hr(),
+      
+      fluidRow(
+        column(width = 12,
+               uiOutput("hcw_trends_widget_ui")
+        )
+      ), #fluidRow
+      hr(),
+      uiOutput("hcw_trends_main_ui"),
+      br3(), br3(), br3()
+      
+      
+    ) # tabPanel bracket
+    ), #navbarMenu
+    
     
     ############################################### Trend Charts ###############################################
     
     tabPanel(
       title = "Trend Charts",
       icon = icon("area-chart"),
-      
-      p("The data in this tab uses NHS Board of employment to allocate board
+
+      h3("Trend Charts"),
+      p("This section allows you to explore charted trend data."),
+
+      strong("Caveats:"),
+      tags$i(
+      tags$ol(
+        tags$li("The data in this tab uses NHS Board of employment to allocate board
         level data."),
-      
-      p(paste0(summary_text_1)), 
-      
-      p(paste0(summary_text_2)), 
-      
-      p(paste0(summary_text_3)), 
-      
-      p(paste0(summary_text_4)), 
-      
-      wellPanel(
-        column(4,
-               div(title = "Select profession.", # tooltip
-                   selectInput("Profession_select", label = h3("Select the data you want to explore."), 
-                               choices = Profession))),
-        
-        column(4,
-               div(title = "Select work location", # tooltip
-                   pickerInput("Location_select", label = h3("Select the data you want to explore."),
-                               choices = NULL,
-                               selected = NULL,
-                               options = list(`actions-box` = TRUE),
-                               multiple = TRUE)))#,
-        
-        # column(4,
-        #        
-        #        actionButton("btn_dataset_modal", paste0("Data source: ", "ECOSS"), icon = icon('question-circle')))
-        # 
-      ), #wellPanel bracket
-      
-      mainPanel(width = 12,
-                uiOutput("data_explorer")
-                
-      )# mainPanel bracket
-      
-    ),# tabpanel bracket
+        tags$li(summary_text_1),
+        tags$li(summary_text_2),
+        tags$li(summary_text_3),
+        tags$li(summary_text_4)
+      )), # caveats
+
+      hr(),
+
+      fluidRow(
+        column(width = 4,
+        pickerInput("trend_chart_profession_sel", label = "Profession",
+                    choices = Profession, multiple = FALSE,width = "100%")),
+        column(width=4,
+        pickerInput("trend_chart_geog_select", label = "Geography",
+                    choices = c("Scotland", "Health Board"),
+                    multiple = FALSE,width = "100%")),
+        column(width = 4,
+          uiOutput("trend_chart_tab_main_widget_ui"))
+      ),
+      hr(),
+
+      uiOutput("trend_chart_tab_main_panel"),
+      br3(), br3()
+      ), # tabPanel
+    
+    
+    
     ############################################### LFT to PCR ###############################################
     
     tabPanel(
@@ -222,7 +263,7 @@ tagList(  #needed for shinyjs
         LFT Portal. Only one positive LFT a day per person is counted. Only the 
         first PCR within 48 hours of the positive LFT is counted. Percentages
         are calculated using the number of positive or negative PCR tests
-        divided by the total number of positive PCRs within 48 hours of a 
+        divided by the total number of PCRs within 48 hours of a 
         positive LFT"), 
       
       p("We cannot confirm that the PCR within 48 hours is a confirmatory PCR 

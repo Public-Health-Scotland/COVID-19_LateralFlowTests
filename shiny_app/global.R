@@ -36,6 +36,7 @@ library(magrittr)
 ############################################### Data ###############################################
 
 weekly_chart_complete <- readRDS("data/weekly_chart_complete.rds")
+cumulative_tests <- readRDS("data/cumulative_tests.rds")
 tidyLFT <- readRDS("data/tidyLFT.rds")
 CHICapture <- readRDS("data/CHICapture.rds")
 PosRate <- readRDS("data/positivity_rate.rds")
@@ -51,10 +52,13 @@ lft_pcr <- readRDS("data/lft_pcr_hb.rds")
 pc_test_reasons <- readRDS("data/PrimaryCare_TestReasons_sc.rds")
 hcw_test_reasons <- readRDS("data/HCW_TestReasons_hb.rds")
 hcw_test_reasons_hosp <- readRDS("data/HCW_TestReasons_hospital.rds")
+hcw_hosp_weekly <- readRDS("data/hcw_job_role_hosp_by_week.rds")
 
 table_1 <- readRDS("data/table_1.rds")
 table_2 <- readRDS("data/table_2.rds")
 table_3 <- readRDS("data/table_3.rds")
+table_4a <- readRDS("data/table_4a.rds")
+table_4b <- readRDS("data/table_4b.rds")
 table_5 <- readRDS("data/table_5.rds")
 table_6a <- readRDS("data/table_6a.rds")
 table_6b <- readRDS("data/table_6b.rds")
@@ -76,8 +80,8 @@ nss_portal_av <- table_5 %>%
 
 ###############################################Functions###############################################
 
-plot_box <- function(title_plot, plot_output) {
-  tagList(h4(title_plot),
+plot_box <- function(title_plot, subtitle_plot = "", plot_output) {
+  tagList(h4(title_plot),p(tags$i(subtitle_plot)),
           withSpinner(plotlyOutput(plot_output)))
 }
 
@@ -167,6 +171,8 @@ lft_date_range <- list(min = min(as_date(table_1$day)),
 lft_table_list <- c("Daily new positive and negative LFD Tests",
                     "Total number of LFD Tested Individuals",
                     "Cumulative Number of LFD Tests by NHS Board",
+                    "Cumulative number of LFD Tests by Category carried out via UK Govt",
+                    "Cumulative number of LFD Tests and Individuals by Category carried out via UK Govt",
                     "Daily new positive and negative LFD Tests via NSS Portal",
                     "Cumulative number of LFD Tests by Category carried out via NSS Portal",
                     "Cumulative number of LFD Tests and Individuals by Category carried out via NSS Portal",
