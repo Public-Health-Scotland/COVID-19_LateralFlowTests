@@ -79,6 +79,24 @@ table_3_reac <- reactive({
     select(-day)
 })
 
+table_4a_reac <- reactive({
+  table_4a %>% 
+    filter(as_date(day) == input$lft_date_select) %>%
+    select(-day) %>%
+    set_colnames(c("Category",
+                   str_c("Notifying on ",format(input$lft_date_select-1, "%d/%m/%Y")," at 8am (since previous return)"),
+                   str_c("Notifying on ",format(input$lft_date_select, "%d/%m/%Y")," at 8am (since previous return)"),
+                   str_c("Cumulative Total as of ",format(input$lft_date_select, "%d/%m/%Y"))))
+  
+})
+
+table_4b_reac <- reactive({
+  table_4b %>% 
+    filter(as_date(day) == input$lft_date_select) %>%
+    select(-day) 
+})
+
+
 table_5_reac <- reactive({
   table_5 %>% 
     filter(as_date(day) == input$lft_date_select) %>%
@@ -137,7 +155,7 @@ output$daily_lft_tab <- renderUI({
       tags$li(lft_kp_3())
     ),
     br(),
-    if(any(lft_table_list[1:3] %in% input$lft_table_select)){
+    if(any(lft_table_list[1:5] %in% input$lft_table_select)){
       tagList(
         h3("UK Government Data"),
         p("The source of these data is the", 
@@ -150,9 +168,32 @@ output$daily_lft_tab <- renderUI({
         inc_table(2, note = paste("*Figures relate to individuals",
                                   "who have a valid CHI for all test results.",
                                   "Tests without valid CHI are excluded.")),
-        inc_table(3)
+        inc_table(3), 
+        inc_table(4, note = paste("UK Gov other includes any LFD result which 
+                                  has come through the UK Government route 
+                                  (NHS Digital) which has the test site code 
+                                  “Other”. Please note the universal offer 
+                                  results will be reported via this method.", 
+                                  "Other is any LFD result via the UK Government 
+                                  route (NHS Digital) which is not included 
+                                  within the other categories, this includes 
+                                  (not an exhaustive list) serial testing, 
+                                  unknown, blank etc.")), 
+        inc_table(5, note = paste("*Figures relate to individuals",
+                                  "who have a valid CHI for all test results.",
+                                  "Tests without valid CHI are excluded.", 
+                                  "UK Gov other includes any LFD result which 
+                                  has come through the UK Government route 
+                                  (NHS Digital) which has the test site code 
+                                  'Other'. Please note the universal offer 
+                                  results will be reported via this method.", 
+                                  "Other is any LFD result via the UK Government 
+                                  route (NHS Digital) which is not included 
+                                  within the other categories, this includes 
+                                  (not an exhaustive list) serial testing, 
+                                  unknown, blank etc."))
       )},
-    if(any(lft_table_list[4:7] %in% input$lft_table_select)){
+    if(any(lft_table_list[6:9] %in% input$lft_table_select)){
       tagList(
         h3("NSS Portal Data"),
         p("The source of these data is the ", tags$a("Scottish Government Lateral Flow Device Portal",
@@ -160,15 +201,20 @@ output$daily_lft_tab <- renderUI({
           " where Scottish health and social care staff voluntarily enter their information and Lateral Flow Device test results after taking a test. On average,", 
           nss_portal_av$n_av, "entries are made each day, with a daily maximum of", paste0(nss_portal_av$n_max, ".")),
         
-        inc_table(4, note = paste("The NSS Portal data is dynamic and subject to change",
+        inc_table(6, note = paste("The NSS Portal data is dynamic and subject to change",
                                   "with each new LFD programme roll-out. Test results",
                                   "are submitted via the NSS Portal app where users",
                                   "manually input their test results.")),
-        inc_table(5),
-        inc_table(6, note = paste("*Figures relate to individuals",
+        inc_table(7),
+        inc_table(8, note = paste("*Figures relate to individuals",
                                   "who have a valid CHI for all test results.",
-                                  "Tests without valid CHI are excluded.")),
-        inc_table(7, note = paste("*Figures relate to individuals",
+                                  "Tests without valid CHI are excluded.", 
+                                  "Other is any LFD result via the UK Government 
+                                  route (NHS Digital) which is not included 
+                                  within the other categories, this includes 
+                                  (not an exhaustive list) haulier, 
+                                  unknown, blank etc.")),
+        inc_table(9, note = paste("*Figures relate to individuals",
                                   "who have a valid CHI for all test results.",
                                   "Tests without valid CHI are excluded."))
       )}
@@ -180,10 +226,12 @@ output$daily_lft_tab <- renderUI({
 output$LFT_table_1 <- renderDataTable({build_data_table(table_1_reac())})
 output$LFT_table_2 <- renderDataTable({build_data_table(table_2_reac())})
 output$LFT_table_3 <- renderDataTable({build_data_table(table_3_reac())})
-output$LFT_table_4 <- renderDataTable({build_data_table(table_5_reac())})
-output$LFT_table_5 <- renderDataTable({build_data_table(table_6a_reac())})
-output$LFT_table_6 <- renderDataTable({build_data_table(table_6b_reac())})
-output$LFT_table_7 <- renderDataTable({build_data_table(table_7_reac())})
+output$LFT_table_4 <- renderDataTable({build_data_table(table_4a_reac())})
+output$LFT_table_5 <- renderDataTable({build_data_table(table_4b_reac())})
+output$LFT_table_6 <- renderDataTable({build_data_table(table_5_reac())})
+output$LFT_table_7 <- renderDataTable({build_data_table(table_6a_reac())})
+output$LFT_table_8 <- renderDataTable({build_data_table(table_6b_reac())})
+output$LFT_table_9 <- renderDataTable({build_data_table(table_7_reac())})
 
 
 ## RMarkdown ----
@@ -195,7 +243,9 @@ output$lft_report_render_dwnl <- downloadHandler(
     # parameters to be used by RMD document
     params <- list(date = input$lft_date_select, tables = input$lft_table_select,
                    table_1_reac = table_1_reac(),table_2_reac = table_2_reac(),
-                   table_3_reac = table_3_reac(),table_5_reac = table_5_reac(),
+                   table_3_reac = table_3_reac(),
+                   table_4a_reac = table_4a_reac(),table_4b_reac = table_4b_reac(),
+                   table_5_reac = table_5_reac(),
                    table_6a_reac = table_6a_reac(),table_6b_reac = table_6b_reac(), 
                    table_7_reac = table_7_reac(),
                    lft_kp_1 = lft_kp_1(), lft_kp_2 = lft_kp_2(), lft_kp_3 = lft_kp_3())
@@ -242,6 +292,8 @@ output$lft_excel_dwnl <- downloadHandler(
     data <- list("UK Gov LFD Tests" = table_1_reac(),
                  "UK Gov LFD Individual" = table_2_reac(),
                  "UK Gov LFDs by HB" = table_3_reac(),
+                 "UK Gov LFDs by Category" = table_4a_reac(),
+                 "UK Gov LFD Individuals Category" = table_4b_reac(),
                  "NSS LFD Tests" = table_5_reac(),
                  "NSS LFD by Category" = table_6a_reac(),
                  "NSS LFD Individuals by Category" = table_6b_reac(),
