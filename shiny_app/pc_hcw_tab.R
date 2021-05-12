@@ -63,9 +63,24 @@ completeness_bar <- function(c){
           axis.ticks.y = element_blank(),
           panel.background = element_blank()) +
     labs(x = "Completeness") +
-  
+    
     coord_flip()
+  
+}
 
+update_hosp_filter <- function(){
+  
+  # location update
+  location_update <- hcw_test_reasons_hosp_format %>%
+    filter(`Job Role` %in% input$hcw_job_role_select,
+           `Health Board` %in% input$hcw_hb_select) %>%
+    pull(Location) %>% unique()
+  
+  # update filters
+  updatePickerInput(session,
+                    "hcw_data_hosp_filter",
+                    choices = location_update, 
+                    selected = location_update)
 }
 
 ### Key Points/ Non-reactive Objects ----
@@ -74,8 +89,8 @@ completeness_bar <- function(c){
 pc_completeness <- 100*(1-pc_test_reasons[1,2]/sum(pc_test_reasons[,2])) %>%
   as.numeric() 
 pc_completeness_lab <- paste("Please Note: The Job Role field is", 
-                          paste0(format(round_half_up(pc_completeness,2), nsmall = 2), "%"),
-                          "complete for Primary Care Worker Tests (all Scotland):")
+                             paste0(format(round_half_up(pc_completeness,2), nsmall = 2), "%"),
+                             "complete for Primary Care Worker Tests (all Scotland):")
 pc_test_reasons_format <- pc_test_reasons %>%
   mutate(number_of_tests = trimws(format(number_of_tests, big.mark=","))) %>%
   rename(`Job Role` = test_cohort_sub_category,
@@ -92,33 +107,33 @@ hcw_completeness <- hcw_test_reasons %>%
   pull(perc)
 
 hcw_completeness_lab <- paste("Please Note: The Job Role field is", 
-                             paste0(format(round_half_up(hcw_completeness,2), nsmall = 2), "%"),
-                             "complete for Healthcare Worker Tests (all Scotland):")
+                              paste0(format(round_half_up(hcw_completeness,2), nsmall = 2), "%"),
+                              "complete for Healthcare Worker Tests (all Scotland):")
 
 hcw_test_reasons_format <- hcw_test_reasons %>% ungroup() %>%
   mutate(number_of_tests = trimws(format(number_of_tests, big.mark=","))) %>%
   rename(`Job Role` = test_cohort_sub_category,
          `Total Tests` = number_of_tests,
-         `Health Board` = subject_residence_nhs_board) %>%
+         `Health Board` = Health_Board_Name) %>%
   select(2,1,3)
 
 hcw_test_reasons_hosp_format <- hcw_test_reasons_hosp %>% ungroup() %>%
   mutate(number_of_tests = trimws(format(number_of_tests, big.mark=","))) %>%
   rename(`Job Role` = test_cohort_sub_category,
          `Total Tests` = number_of_tests,
-         `Health Board` = subject_residence_nhs_board,
+         `Health Board` = Health_Board_Name,
          Location = organisation_name) %>%
   select(2,1,3,4)
 
 hcw_job_roles <- hcw_test_reasons$test_cohort_sub_category %>% unique
-hcw_hb <- hcw_test_reasons$subject_residence_nhs_board %>% unique
+hcw_hb <- hcw_test_reasons$Health_Board_Name %>% unique
 
 ### Build UI ----
 output$pc_hwc_tab_widget_ui <- renderUI({ 
   if(input$pc_hcw_radio_select == "Healthcare Workers"){
     tagList(
       column(width = 8,
-             column(4,
+             column(6,
                     pickerInput("hcw_job_role_select", label = "Job Role", 
                                 choices = hcw_job_roles, 
                                 selected = hcw_job_roles,
@@ -126,23 +141,43 @@ output$pc_hwc_tab_widget_ui <- renderUI({
                                 options = list(`actions-box` = TRUE))
              ),
              
-             column(4,
+             column(6,
                     pickerInput("hcw_hb_select", label = "Health Board", 
                                 choices = hcw_hb, selected = "Scotland",
                                 multiple = TRUE,width = "100%",
                                 options = list(`actions-box` = TRUE))
-             ),
-             column(4,
-                    br(),
-                    prettyCheckbox("hcw_hospital", 
-                                   label = strong("Include HCW Hospital/ Organisation"), 
-                                   value = 0,
-                                   shape = "curve",icon = icon("check"),
-                                   animation = "pulse")
-             )
+             )),
+      
+      # new row
+      column(offset = 8, width = 4,
+             prettyCheckbox("hcw_hospital", 
+                            label = strong("Include HCW Hospital/ Organisation"), 
+                            value = 0,
+                            shape = "curve",icon = icon("check"),
+                            animation = "pulse"),
+             uiOutput("hcw_data_hosp_filter_ui")
       ))
   }
 })
+
+output$hcw_data_hosp_filter_ui <- renderUI({
+  if(input$hcw_hospital == 1) { # if hcw_hospital checkbox checked
+    tagList( 
+      pickerInput("hcw_data_hosp_filter", 
+                  label = "Hospital/ Organisation Name", 
+                  choices = NULL, 
+                  selected = NULL,
+                  multiple = TRUE, width = "95%", 
+                  options = list(`actions-box` = TRUE, 
+                                 `live-search`=TRUE))
+      
+    )} else {tagList(br(), br())}
+})
+observeEvent(input$hcw_hospital, { update_hosp_filter() })
+observeEvent(input$hcw_hb_select, { update_hosp_filter() })
+observeEvent(input$hcw_job_role_select, { update_hosp_filter() })
+
+
 
 output$pc_hcw_tab_main_ui <- renderUI({
   
@@ -184,7 +219,8 @@ hcw_test_reasons_format_reac <- reactive({
   }else{
     hcw_test_reasons_hosp_format %>% 
       filter(`Job Role` %in% input$hcw_job_role_select,
-             `Health Board` %in% input$hcw_hb_select)
+             `Health Board` %in% input$hcw_hb_select,
+             Location %in% input$hcw_data_hosp_filter) 
   }
 })
 
@@ -193,4 +229,4 @@ hcw_test_reasons_format_reac <- reactive({
 output$pc_comp_chart <- renderPlot({completeness_bar(c = pc_completeness)})
 output$hcw_comp_chart <- renderPlot({  completeness_bar(c = hcw_completeness)})
 output$pc_worker_table <- renderDataTable({build_pc_hcw_tables(pc_test_reasons_format)})
-output$hcw_worker_table <- renderDataTable({build_pc_hcw_tables(hcw_test_reasons_format_reac(), dom = "tipB", nrow = 20)}, server = FALSE)
+output$hcw_worker_table <- renderDataTable({build_pc_hcw_tables(hcw_test_reasons_format_reac(), dom = "tipB", nrow = 21)}, server = FALSE)

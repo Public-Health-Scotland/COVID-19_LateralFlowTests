@@ -1,4 +1,5 @@
 ---
+title: "HPS Daily Data Submissions"
 output: 
   word_document:
         reference_docx: "NATIONAL_STATS_REPORT_TEMPLATE.docx"
@@ -28,24 +29,41 @@ lft_table_list <- c("Daily new positive and negative LFD Tests",
                     "Cumulative number of LFD Tests and Individuals by Category carried out via NSS Portal",
                     "Cumulative number of LFD Tests and Individuals by Health Board carried out via NSS Portal")
 
-
+# source("Format Tables.R")
+# table_1 <- format_tables(params$table_1_reac, 1)
 
 # initalise Y (table numbers)
 Y <- 1
 ```
 
 ```{r, eval = TRUE, echo = FALSE}
-asis_output(paste("## Daily LFT Report for",params$date))
+asis_output(paste("**Date Submitted up to:",format(params$date, "%d/%m/%Y"), "**"))
+```
+
+**NEW Lateral Flow (Rapid Antigen) Tests IN LAST 24 HOURS**
+
+```{r, eval = TRUE, echo = FALSE}
+if(any(lft_table_list[1:3] %in% params$tables)){
+  asis_output("UK Government Data relate to tests conducted in Universities and community testing sites captured via the UK Govt data capture route.")
+}
 ```
 
 ```{r, eval = TRUE, echo = FALSE}
-###Key Points
-asis_output(paste0(
+if(any(lft_table_list[4:7] %in% params$tables)){
+asis_output("NSS Portal Data relate to tests for healthcare workers, care home staff and other groups captured via the NSS Portal.")
+  }
+```
+
+<!--
+ ```{r, eval = TRUE, echo = FALSE}
+###Key Points 
+asis_output(paste0( 
 params$lft_kp_1, "\n",
-params$lft_kp_2, "\n",
+ params$lft_kp_2, "\n", 
 params$lft_kp_3
 ))
-```
+``` 
+-->
 
 ```{r, eval = TRUE, echo = FALSE}
 if(any(lft_table_list[1:3] %in% params$tables)){
@@ -62,7 +80,7 @@ asis_output(paste("####",lft_table_list[1]))
 
 ``` {r echo=FALSE} 
 if(lft_table_list[1]  %in% params$tables){
-  params$table_1_reac %>% knitr::kable(format = "markdown")
+  params$table_1 %>% knitr::kable(format = "markdown")
 }
 
 
@@ -83,14 +101,14 @@ if(lft_table_list[2]  %in% params$tables){
 ```
 ``` {r, eval = TRUE, echo = FALSE}
 if(lft_table_list[2]  %in% params$tables){
-asis_output("*Figures relate to individuals who have a valid CHI for all test results. Tests without valid CHI are excluded.*")
+asis_output("*The following figures relate to individuals who have a valid CHI for all test results. Tests without valid CHI are excluded.*")
 }
 ````
 
 <!--Table 3-->
 ```{r, eval = TRUE, echo = FALSE}
 if(lft_table_list[3]  %in% params$tables){
-asis_output(paste("###",lft_table_list[3]))
+asis_output(paste("####",lft_table_list[3]))
 }
 ```
 
@@ -103,7 +121,7 @@ if(lft_table_list[3]  %in% params$tables){
 
 ```{r, eval = TRUE, echo = FALSE}
 if(any(lft_table_list[4:7] %in% params$tables)){
-  asis_output(paste("#### NSS Portal Data"))
+  asis_output(paste("### NSS Portal Data"))
   }
 ```
 
@@ -179,3 +197,10 @@ if(lft_table_list[7]  %in% params$tables){
 asis_output("*Figures relate to individuals who have a valid CHI for all test results. Tests without valid CHI are excluded.*")
 }
 ````
+
+
+``` {r, eval = TRUE, echo = FALSE}
+if(lft_table_list[7]  %in% params$tables){
+asis_output("Tests via the NSS Portal do not have health board data readily available. This is determined by using the user submitted residential postcode and looking up health board in line with the Scottish postcode directory. In the event a postcode is invalid, an individual’s other tests (LFT prioritised, then PCR) are looked up and the most recent test with a valid postcode is used to determine health board. This differs from the health board seeding ECOSS data uses for unknown addresses. If a health board is unknown for ECOSS data, the health board of the submitting lab is used.")
+}
+```

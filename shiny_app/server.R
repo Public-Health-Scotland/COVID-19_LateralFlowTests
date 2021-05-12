@@ -29,7 +29,11 @@ function(input, output, session) {
   source(file.path("pc_hcw_tab.R"),  local = TRUE)$value
   
   ###############################################.
-  # Summary trends tab  
+  # HCW trends tab  
+  source(file.path("HCW_trends.R"),  local = TRUE)$value
+  
+  ###############################################.
+  # Summary trends tab
   source(file.path("summary_tab.R"),  local = TRUE)$value
   
   ###############################################.

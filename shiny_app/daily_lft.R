@@ -202,7 +202,8 @@ output$lft_report_render_dwnl <- downloadHandler(
     
     # get file paths of our RMD script and reference word doc
     src <- normalizePath(c('rmd scripts/Daily LFT Report.Rmd', 
-                           'rmd scripts/NATIONAL_STATS_REPORT_TEMPLATE.docx')) 
+                           'rmd scripts/NATIONAL_STATS_REPORT_TEMPLATE.docx',
+                           'rmd scripts/Format Tables.R')) 
     
     # set the working directory to the temp directory
     owd <- setwd(tempdir())
@@ -212,7 +213,8 @@ output$lft_report_render_dwnl <- downloadHandler(
     
     # render the report
     file.copy(src, c('Daily LFT Report.Rmd', 
-                     'NATIONAL_STATS_REPORT_TEMPLATE.docx'), 
+                     'NATIONAL_STATS_REPORT_TEMPLATE.docx',
+                     'Format Tables.R'), 
               overwrite = TRUE) 
     
     out <- rmarkdown::render('Daily LFT Report.Rmd',
