@@ -235,10 +235,3 @@ if(lft_table_list[9]  %in% params$tables){
 asis_output("*Figures relate to individuals who have a valid CHI for all test results. Tests without valid CHI are excluded.*")
 }
 ````
-
-
-``` {r, eval = TRUE, echo = FALSE}
-if(lft_table_list[7]  %in% params$tables){
-asis_output("Tests via the NSS Portal do not have health board data readily available. This is determined by using the user submitted residential postcode and looking up health board in line with the Scottish postcode directory. In the event a postcode is invalid, an individual’s other tests (LFT prioritised, then PCR) are looked up and the most recent test with a valid postcode is used to determine health board. This differs from the health board seeding ECOSS data uses for unknown addresses. If a health board is unknown for ECOSS data, the health board of the submitting lab is used.")
-}
-```
